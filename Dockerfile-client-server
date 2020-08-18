@@ -1,0 +1,11 @@
+FROM golang:1.11.5
+
+ENV APP http-client
+
+COPY . /go/src/${APP}
+WORKDIR /go/src/${APP}
+
+RUN go get ./
+RUN go build -o ${APP}
+
+CMD ./${APP}

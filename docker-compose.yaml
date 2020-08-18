@@ -4,7 +4,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-WAF
-    command: -l trace --concurrency 1 -c /etc/envoy.yaml
+    command: -l error --concurrency 1 -c /etc/envoy.yaml
+    image: waf-proxy
     entrypoint: /usr/local/bin/envoy
     volumes:
       - ./envoy.yaml:/etc/envoy.yaml
@@ -12,7 +13,17 @@ services:
     expose:
       - "8000"
     ports:
+      - "8099:8099"
       - "8000:8000"
+    networks:
+      - WAF-integration-test
+  client-server:
+    build:
+      context: .
+      dockerfile: Dockerfile-client-server
+    image: go-client-server
+    expose:
+      - "8080"
     networks:
       - WAF-integration-test
 networks:
