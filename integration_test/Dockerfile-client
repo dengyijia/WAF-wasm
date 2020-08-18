@@ -2,7 +2,7 @@ FROM golang:1.11.5
 
 ENV APP http-client
 
-COPY . /go/src/${APP}
+COPY ./http-client.go /go/src/${APP}/http-client.go
 WORKDIR /go/src/${APP}
 
 RUN go get ./

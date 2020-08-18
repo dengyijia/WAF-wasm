@@ -68,12 +68,12 @@ static_resources:
   clusters:
   - name: web_service
     connect_timeout: 0.25s
-    type: static
+    type: LOGICAL_DNS
     lb_policy: round_robin
     hosts:
     - socket_address:
-        address: 127.0.0.1
-        port_value: 8099
+        address: client-server
+        port_value: 8080
 admin:
   access_log_path: "/dev/null"
   address:

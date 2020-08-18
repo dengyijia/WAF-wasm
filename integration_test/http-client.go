@@ -7,14 +7,25 @@ import (
 	"time"
 )
 
-func main() {
-	// start the server
+func handler(w http.ResponseWriter, req *http.Request) {
+	fmt.Fprintf(w, "hello\n")
+}
 
+func startServer(port string) {
+	http.HandleFunc("/", handler)
+	http.ListenAndServe(port, nil)
+}
+
+func main() {
+	// wait for the server and proxy to run
+	time.Sleep(5 * time.Second)
+
+	go startServer(":8080")
 
 	// test that the proxy is up
 	resp, err := http.Get("http://proxy:8000")
 	for err != nil {
-		fmt.Println(err)
+		fmt.Println("Client connecting to proxy ...")
 		time.Sleep(5 * time.Second)
 		resp, err = http.Get("http://proxy:8000")
 	}
@@ -33,8 +44,7 @@ func main() {
 
 	// make test requests
 
-
 	// terminate with sucess
-	fmt.Println("====== Passed all integration tests ======")
+	fmt.Println("====== Passed all client side integration tests ======")
 }
 
