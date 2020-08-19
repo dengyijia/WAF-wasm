@@ -10,7 +10,7 @@
 #include "utility/sqli.h"
 
 void onSQLi(std::string part) {
-  LOG_ERROR("SQL injection detected");
+  LOG_TRACE("SQL injection detected");
   std::string response_body = "SQL injection detected";
   std::string response_log = "SQLi at " + part;
   sendLocalResponse(403, response_log, response_body, {});
@@ -142,7 +142,7 @@ FilterHeadersStatus ExampleContext::onRequestHeaders(uint32_t, bool) {
 FilterDataStatus ExampleContext::onRequestBody(size_t body_buffer_length, bool end_of_stream) {
   auto body = getBufferBytes(WasmBufferType::HttpRequestBody, 0, body_buffer_length);
   auto body_str = std::string(body->view());
-  LOG_ERROR(std::string("onRequestBody ") + body_str);
+  LOG_TRACE(std::string("onRequestBody ") + body_str);
 
   if (content_type_.compare("application/x-www-form-urlencoded") != 0) {
     return FilterDataStatus::Continue;

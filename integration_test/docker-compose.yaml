@@ -16,7 +16,9 @@ services:
   client-server:
     build:
       context: .
-      dockerfile: Dockerfile-client
+      dockerfile: Dockerfile-client-server
+    ports:
+      - "8080:8080"
     networks:
       - WAF-integration-test
 networks:
