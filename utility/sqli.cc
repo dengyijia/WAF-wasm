@@ -24,6 +24,7 @@ Keys pickKeysForDetection(QueryParams params, bool include, Keys keys, std::stri
 }
 
 bool detectSQLiOnParams(QueryParams params, bool include, Keys keys, std::string* log) {
+  *log = "";
   Keys keys_to_inspect = pickKeysForDetection(params, include, keys, log);
   for (auto key : keys_to_inspect) {
     auto param = params.find(key);

@@ -127,7 +127,7 @@ FilterHeadersStatus ExampleContext::onRequestHeaders(uint32_t, bool) {
   std::string path = getRequestHeader(":path")->toString();
   QueryParams path_params = parsePath(path);
   LOG_TRACE("Path parsed: " + printParams(path_params));
-  if (detectSQLiOnParams(cookies, false, {}, &log)) {
+  if (detectSQLiOnParams(path_params, false, {}, &log)) {
     onSQLi("path");
     return FilterHeadersStatus::StopIteration;
   }

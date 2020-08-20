@@ -25,29 +25,42 @@ type Body = map[string]string
 *   keep track of info used by a test suite
 */
 type Test struct {
-  // the proxy url for the test client to send requests to
+  // url of the proxy to be tested
+  // the test client will send requests to this url
   proxy_url string
+
+  // the port that the test server will be listening at
+  server_port string
 
   // the expected message received from the test server if
   // the request has been successful
   server_message string
-  server_port string
 
-  // the channel for communication between the server goroutine
+  // the channel for communication between the server
   // and the client. Received requests will be pushed through this
   // channel by the server for the client to verify
   request_received chan *http.Request
   body_string_received chan string
 }
 
+/*
+* Start the test server
+*   upon receiving a request, the server will push the request
+*   through the communication channel for the client to verify
+*   (since the request body will be closed when the client receive
+*   from the channel, the body is sent in a separate channel as a
+*   string literal)
+*
+*   the server will also send a response with server_message as its
+*   body
+*/
 func (t Test) StartServer() {
   http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+    body, _ := ioutil.ReadAll(r.Body)
     go func() {
       t.request_received <- r
     }()
     go func() {
-      body, _ := ioutil.ReadAll(r.Body)
-      fmt.Println("server body: ", string(body))
       t.body_string_received <- string(body)
     }()
     fmt.Fprintf(w, t.server_message)
@@ -56,6 +69,9 @@ func (t Test) StartServer() {
   fmt.Println("Server started")
 }
 
+/*
+* Test if the proxy and the test server has been properly connected
+*/
 func (t Test) CheckProxyConnection() {
   // wait and test that the proxy is up
   time.Sleep(2 * time.Second)
@@ -91,25 +107,19 @@ func (t Test) CheckProxyConnection() {
 *   true if the test passed, false if not
 */
 func (t Test) Test(path string, headers Header, cookies Cookie, body Body, sqli bool) bool {
-  // set request path, body, header, cookie
-  request_body_url := url.Values{}
+  // initialize request
+  request_body_map := url.Values{}
   for key, val := range body {
-    request_body_url.Set(key, val)
+    request_body_map.Set(key, val)
   }
-  request_body := request_body_url.Encode()
+  request_body := request_body_map.Encode()
   request, _ := http.NewRequest("POST", t.proxy_url + path, strings.NewReader(request_body))
+  request.Header.Set("content-type", "application/x-www-form-urlencoded")
   for key, val := range headers {
     request.Header.Set(key, val)
   }
   for key, val := range cookies {
     request.AddCookie(&http.Cookie{Name: key, Value: val})
-  }
-
-  for len(t.request_received) > 0 {
-    <-t.request_received
-  }
-  for len(t.body_string_received) > 0 {
-    <-t.body_string_received
   }
 
   // send request
@@ -121,8 +131,7 @@ func (t Test) Test(path string, headers Header, cookies Cookie, body Body, sqli 
   }
   defer response.Body.Close()
 
-  time.Sleep(2 * time.Second)
-  // check results of the request
+  // get request from server
   var received *http.Request
   var received_body string
   select {
@@ -134,11 +143,13 @@ func (t Test) Test(path string, headers Header, cookies Cookie, body Body, sqli 
     default: received_body = ""
   }
 
+  // verify the request and the response
   if sqli {
     // if the request contains SQL injection, it should be blocked
     // the server should never receive any request
     if received != nil {
       fmt.Println("Request with SQL injection was not blocked")
+      fmt.Println(received.URL.Path)
       return false
     }
 
@@ -155,6 +166,12 @@ func (t Test) Test(path string, headers Header, cookies Cookie, body Body, sqli 
       fmt.Println("Request without SQL injection was blocked")
       return false
     }
+    if path != received.URL.Path {
+      fmt.Println("Request without SQL injection has path altered by proxy")
+      fmt.Println("EXPECTED: ", path)
+      fmt.Println("ACTUAL: ", received.Header.Get(":path"))
+      return false
+    }
     for key, val := range headers {
       if received.Header.Get(key) != val {
         fmt.Println("Request without SQL injection has header altered by proxy")
@@ -163,12 +180,11 @@ func (t Test) Test(path string, headers Header, cookies Cookie, body Body, sqli 
         return false
       }
     }
-    for _, cookie_received := range received.Cookies() {
-      cookie_sent, found := cookies[cookie_received.Name]
-     if found == false || cookie_sent != cookie_received.Value {
+    for key, val := range cookies {
+      cookie_sent, err := received.Cookie(key)
+      if err != nil || cookie_sent.Value != val {
 	fmt.Println("Request without SQL injection has cookie altered by proxy")
-	fmt.Println("EXPECTED: ", cookie_received.Name, cookie_sent)
-	fmt.Println("ACTUAL: ", cookie_received.Name, cookie_received.Value)
+	fmt.Println("EXPECTED: ", cookie_sent)
         return false
       }
     }
@@ -224,7 +240,13 @@ func (test Test) TestRequestWithoutSQLI() bool {
            false)
 }
 
-func (test Test) TestSQLIinPath() {
+func (test Test) TestSQLIinPath() bool {
+  return test.Test("/path?val=-1%27+and+1%3D1%0D%0A",
+           Header{},
+	   Cookie{},
+	   Body{},
+           true)
+
 }
 
 func TestSQLIinHeader() {
@@ -258,6 +280,7 @@ func main() {
 
   // start testing
   run("Test Request Without SQLI", test.TestRequestWithoutSQLI())
+  run("Test SQLI in path", test.TestSQLIinPath())
 
   // terminate with sucess
   fmt.Println("====== Passed all integration tests ======")
