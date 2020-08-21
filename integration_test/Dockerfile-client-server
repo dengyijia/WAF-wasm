@@ -1,8 +1,8 @@
 FROM golang
 
-ENV APP http-client
+ENV APP integration_test
 
-COPY ./http-client-server.go /go/src/${APP}/http-client-server.go
+COPY . /go/src/${APP}/
 WORKDIR /go/src/${APP}
 
 RUN go get ./
