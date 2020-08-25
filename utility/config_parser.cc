@@ -12,9 +12,12 @@ std::string config_field_to_string(bool include, Keys keys) {
 }
 
 std::string Config::to_string() {
-  std::string param_str = "\nquery param " + config_field_to_string(param_include, params);
-  std::string header_str = "\nheaders " + config_field_to_string(header_include, headers);
-  std::string cookie_str = "\ncookies " + config_field_to_string(cookie_include, cookies);
+  std::string param_str =
+      "\nquery param " + config_field_to_string(param_include, params);
+  std::string header_str =
+      "\nheaders " + config_field_to_string(header_include, headers);
+  std::string cookie_str =
+      "\ncookies " + config_field_to_string(cookie_include, cookies);
   return "config: " + content_type + param_str + header_str + cookie_str;
 }
 
@@ -30,23 +33,23 @@ std::string Config::to_string() {
  */
 bool validate_config_field(Json field, bool* include, Keys* keys,
                            std::string* log) {
-   if (field.is_null()) {
-     return true;
-   }
-   if (!field["include"].is_null() && !field["exclude"].is_null()) {
-     *log = "include and exclude cannot both be present";
-     return false;
-   }
-   if (!field["include"].is_null()) {
-     *include = true;
-     auto include_keys = field["include"].get<Keys>();
-     keys->insert(include_keys.begin(), include_keys.end());
-   }
-   if (!field["exclude"].is_null()) {
-     *include = false;
-     *keys = field["exclude"].get<Keys>();
-   }
-   return true;
+  if (field.is_null()) {
+    return true;
+  }
+  if (!field["include"].is_null() && !field["exclude"].is_null()) {
+    *log = "include and exclude cannot both be present";
+    return false;
+  }
+  if (!field["include"].is_null()) {
+    *include = true;
+    auto include_keys = field["include"].get<Keys>();
+    keys->insert(include_keys.begin(), include_keys.end());
+  }
+  if (!field["exclude"].is_null()) {
+    *include = false;
+    *keys = field["exclude"].get<Keys>();
+  }
+  return true;
 }
 
 bool parseConfig(std::string configuration, Config* config, std::string* log) {
@@ -66,23 +69,26 @@ bool parseConfig(std::string configuration, Config* config, std::string* log) {
     }
     std::string content_type = query_param["content-type"].get<std::string>();
     if (content_type.compare(URLENCODED) != 0) {
-      *log = ("invalid content type, only application/x-www-form-urlencoded is supported");
+      *log =
+          ("invalid content type, only application/x-www-form-urlencoded is "
+           "supported");
       return false;
     }
-    if (!validate_config_field(query_param, &config->param_include, &config->params, log)) {
+    if (!validate_config_field(query_param, &config->param_include,
+                               &config->params, log)) {
       return false;
     }
   }
   // validate cookie configuration
-  if (!validate_config_field(j["cookie"], &config->cookie_include, &config->cookies, log)) {
+  if (!validate_config_field(j["cookie"], &config->cookie_include,
+                             &config->cookies, log)) {
     return false;
   }
   // validate header configuration
-  if (!validate_config_field(j["header"], &config->header_include, &config->headers, log)) {
+  if (!validate_config_field(j["header"], &config->header_include,
+                             &config->headers, log)) {
     return false;
   }
   *log = "config parsed into context ->" + config->to_string();
   return true;
 }
-
-

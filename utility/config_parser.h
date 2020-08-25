@@ -12,16 +12,16 @@ using Json = nlohmann::json;
  * If <filed>_include is false, <field>s contains the names to be excluded
  */
 struct Config {
-  std::string content_type { URLENCODED };
+  std::string content_type{URLENCODED};
 
-  bool param_include { false };
-  Keys params {};
+  bool param_include{false};
+  Keys params{};
 
-  bool header_include { true };
-  Keys headers { "referer", "user-agent" };
+  bool header_include{true};
+  Keys headers{"referer", "user-agent"};
 
-  bool cookie_include { false };
-  Keys cookies {};
+  bool cookie_include{false};
+  Keys cookies{};
 
   std::string to_string();
 };

@@ -1,8 +1,8 @@
 // NOLINT(namespace-envoy)
 #include <string>
-#include <vector>
 #include <unordered_map>
 #include <unordered_set>
+#include <vector>
 
 #include "proxy_wasm_intrinsics.h"
 #include "utility/config_parser.h"
@@ -25,36 +25,40 @@ std::string printParams(QueryParams params) {
 }
 
 class ExampleRootContext : public RootContext {
-public:
-  explicit ExampleRootContext(uint32_t id, StringView root_id) : RootContext(id, root_id) {}
+ public:
+  explicit ExampleRootContext(uint32_t id, StringView root_id)
+      : RootContext(id, root_id) {}
 
   bool onConfigure(size_t config_size) override;
   bool onStart(size_t) override;
   Config getConfig() { return config_; }
 
-private:
+ private:
   struct Config config_;
 };
 
 class ExampleContext : public Context {
-public:
+ public:
   explicit ExampleContext(uint32_t id, RootContext* root) : Context(id, root) {}
 
   void onCreate() override;
-  FilterHeadersStatus onRequestHeaders(uint32_t headers, bool end_of_stream) override;
-  FilterDataStatus onRequestBody(size_t body_buffer_length, bool end_of_stream) override;
-  FilterHeadersStatus onResponseHeaders(uint32_t headers, bool end_of_stream) override;
+  FilterHeadersStatus onRequestHeaders(uint32_t headers,
+                                       bool end_of_stream) override;
+  FilterDataStatus onRequestBody(size_t body_buffer_length,
+                                 bool end_of_stream) override;
+  FilterHeadersStatus onResponseHeaders(uint32_t headers,
+                                        bool end_of_stream) override;
   void onDone() override;
   void onLog() override;
   void onDelete() override;
 
-private:
+ private:
   std::string content_type_;
   struct Config config_;
 };
-static RegisterContextFactory register_ExampleContext(CONTEXT_FACTORY(ExampleContext),
-                                                      ROOT_FACTORY(ExampleRootContext),
-                                                      "root_WAF");
+static RegisterContextFactory register_ExampleContext(
+    CONTEXT_FACTORY(ExampleContext), ROOT_FACTORY(ExampleRootContext),
+    "root_WAF");
 
 bool ExampleRootContext::onStart(size_t) {
   LOG_TRACE("onStart");
@@ -67,7 +71,8 @@ bool ExampleRootContext::onConfigure(size_t config_size) {
   }
 
   // read configuration string from buffer
-  auto configuration_data = getBufferBytes(WasmBufferType::PluginConfiguration, 0, config_size);
+  auto configuration_data =
+      getBufferBytes(WasmBufferType::PluginConfiguration, 0, config_size);
   std::string configuration = configuration_data->toString();
 
   // parse configuration string into Config
@@ -86,7 +91,8 @@ void ExampleContext::onCreate() {
   // get config from root
   ExampleRootContext* root = dynamic_cast<ExampleRootContext*>(this->root());
   config_ = root->getConfig();
-  LOG_TRACE("onCreate: config loaded from root context ->" + config_.to_string());
+  LOG_TRACE("onCreate: config loaded from root context ->" +
+            config_.to_string());
 }
 
 FilterHeadersStatus ExampleContext::onRequestHeaders(uint32_t, bool) {
@@ -99,7 +105,8 @@ FilterHeadersStatus ExampleContext::onRequestHeaders(uint32_t, bool) {
   QueryParams headers;
   LOG_INFO(std::string("headers: ") + std::to_string(pairs.size()));
   for (auto& p : pairs) {
-    LOG_INFO(std::string(p.first) + std::string(" -> ") + std::string(p.second));
+    LOG_INFO(std::string(p.first) + std::string(" -> ") +
+             std::string(p.second));
     headers.emplace(p.first, p.second);
   }
   LOG_TRACE("all headers printed");
@@ -107,7 +114,8 @@ FilterHeadersStatus ExampleContext::onRequestHeaders(uint32_t, bool) {
   std::string log;
 
   // detect SQL injection in headers
-  if (detectSQLiOnParams(headers, config_.header_include, config_.headers, &log)) {
+  if (detectSQLiOnParams(headers, config_.header_include, config_.headers,
+                         &log)) {
     onSQLi("Header");
     return FilterHeadersStatus::StopIteration;
   }
@@ -117,7 +125,8 @@ FilterHeadersStatus ExampleContext::onRequestHeaders(uint32_t, bool) {
   std::string cookie_str = getRequestHeader("Cookie")->toString();
   QueryParams cookies = parseCookie(cookie_str);
   LOG_TRACE("Cookies parsed: " + printParams(cookies));
-  if (detectSQLiOnParams(cookies, config_.cookie_include, config_.cookies, &log)) {
+  if (detectSQLiOnParams(cookies, config_.cookie_include, config_.cookies,
+                         &log)) {
     onSQLi("cookie");
     return FilterHeadersStatus::StopIteration;
   }
@@ -139,8 +148,10 @@ FilterHeadersStatus ExampleContext::onRequestHeaders(uint32_t, bool) {
   return FilterHeadersStatus::Continue;
 }
 
-FilterDataStatus ExampleContext::onRequestBody(size_t body_buffer_length, bool end_of_stream) {
-  auto body = getBufferBytes(WasmBufferType::HttpRequestBody, 0, body_buffer_length);
+FilterDataStatus ExampleContext::onRequestBody(size_t body_buffer_length,
+                                               bool end_of_stream) {
+  auto body =
+      getBufferBytes(WasmBufferType::HttpRequestBody, 0, body_buffer_length);
   auto body_str = std::string(body->view());
   LOG_ERROR(std::string("onRequestBody ") + body_str);
 
@@ -152,7 +163,8 @@ FilterDataStatus ExampleContext::onRequestBody(size_t body_buffer_length, bool e
   std::string log;
   auto query_params = parseBody(body_str);
   LOG_TRACE("query params parsed: " + printParams(query_params));
-  if (detectSQLiOnParams(query_params, config_.param_include, config_.params, &log)) {
+  if (detectSQLiOnParams(query_params, config_.param_include, config_.params,
+                         &log)) {
     onSQLi("body query params");
     return FilterDataStatus::StopIterationAndBuffer;
   }
@@ -166,16 +178,22 @@ FilterHeadersStatus ExampleContext::onResponseHeaders(uint32_t, bool) {
   auto pairs = result->pairs();
   LOG_INFO(std::string("headers: ") + std::to_string(pairs.size()));
   for (auto& p : pairs) {
-    LOG_INFO(std::string(p.first) + std::string(" -> ") + std::string(p.second));
+    LOG_INFO(std::string(p.first) + std::string(" -> ") +
+             std::string(p.second));
   }
   addResponseHeader("branch", "libinjection-config");
   replaceResponseHeader("location", "envoy-wasm");
   return FilterHeadersStatus::Continue;
 }
 
+void ExampleContext::onDone() {
+  LOG_WARN(std::string("onDone " + std::to_string(id())));
+}
 
-void ExampleContext::onDone() { LOG_WARN(std::string("onDone " + std::to_string(id()))); }
+void ExampleContext::onLog() {
+  LOG_WARN(std::string("onLog " + std::to_string(id())));
+}
 
-void ExampleContext::onLog() { LOG_WARN(std::string("onLog " + std::to_string(id()))); }
-
-void ExampleContext::onDelete() { LOG_WARN(std::string("onDelete " + std::to_string(id()))); }
+void ExampleContext::onDelete() {
+  LOG_WARN(std::string("onDelete " + std::to_string(id())));
+}

@@ -1,5 +1,6 @@
-#include "test_common.h"
 #include "../utility/config_parser.h"
+
+#include "test_common.h"
 
 // Check that invalid json formatting will be handled
 TEST InvalidFormat(void) {
@@ -60,7 +61,8 @@ TEST QueryParamsConfig(void) {
   result = parseConfig(param_unsupported, &config_unsupported, &log);
   ASSERT_EQ(result, false);
   ASSERT_EQ(log,
-    "invalid content type, only application/x-www-form-urlencoded is supported");
+            "invalid content type, only application/x-www-form-urlencoded is "
+            "supported");
 
   // success: default config when no include/exclude is provided
   Config config_default;
@@ -269,7 +271,7 @@ SUITE(configTests) {
 
 GREATEST_MAIN_DEFS();
 
-int main(int argc, char** argv){
+int main(int argc, char** argv) {
   GREATEST_MAIN_BEGIN();
   RUN_SUITE(configTests);
   GREATEST_MAIN_END();

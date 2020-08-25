@@ -7,7 +7,8 @@ bool detectSQLi(std::string input) {
   return libinjection_is_sqli(&state);
 }
 
-Keys pickKeysForDetection(QueryParams params, bool include, Keys keys, std::string* log) {
+Keys pickKeysForDetection(QueryParams params, bool include, Keys keys,
+                          std::string* log) {
   Keys keys_to_inspect;
   if (include) {
     // include the given keys for detection
@@ -23,7 +24,8 @@ Keys pickKeysForDetection(QueryParams params, bool include, Keys keys, std::stri
   return keys_to_inspect;
 }
 
-bool detectSQLiOnParams(QueryParams params, bool include, Keys keys, std::string* log) {
+bool detectSQLiOnParams(QueryParams params, bool include, Keys keys,
+                        std::string* log) {
   Keys keys_to_inspect = pickKeysForDetection(params, include, keys, log);
   for (auto key : keys_to_inspect) {
     auto param = params.find(key);

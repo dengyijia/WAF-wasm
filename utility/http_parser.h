@@ -11,6 +11,3 @@ QueryParams parseBody(std::string body);
 
 // parse the http cookie header value into key-value pairs
 QueryParams parseCookie(std::string cookie);
-
-
-
