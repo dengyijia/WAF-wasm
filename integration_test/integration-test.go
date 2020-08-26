@@ -98,7 +98,7 @@ func NewTestRequest() TestRequest {
 		pathParams: url.Values{"path-key-0": {"path-val-0"}},
 		headers: Map{"header-key-0": "header-val-0"},
 		cookies: Map{"cookie-key-0": "cookie-val-0"},
-		body: url.Values{"body-key-0": {"body-key-0"}},
+		body: url.Values{"body-key-0": {"body-val-0"}},
 		sqli: false,
 	}
 }
@@ -124,9 +124,7 @@ func (suite TestSuite) StartServer() {
 	serveMux := http.NewServeMux()
 	serveMux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		body, _ := ioutil.ReadAll(r.Body)
-		//fmt.Println("Server receives body with path", r.URL.Path)
 		go func() {
-			//fmt.Println("Server pushing request")
 			suite.request_received <- r
 		} ()
 		go func() {
@@ -212,6 +210,9 @@ func (suite TestSuite) Eval(test TestRequest) bool {
 	}
 	defer response.Body.Close()
 
+	// wait for the received request to send through
+	time.Sleep(100 * time.Millisecond)
+
 	// get request from server
 	var received *http.Request
 	var received_body string
@@ -230,7 +231,6 @@ func (suite TestSuite) Eval(test TestRequest) bool {
 		// the server should never receive any request
 		if received != nil {
 			fmt.Println("Request with SQL injection was not blocked")
-			fmt.Println(received.URL.Path)
 			fmt.Println(response.Status)
 			//return false
 		}

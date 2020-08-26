@@ -4,7 +4,7 @@ This repository is forked from [`envoyproxy/envoy-wasm`](https://github.com/envo
 
 ## Build
 
-We will build the WASM module with `proxy-wasm-cpp-sdk` on docker.
+We will build the WASM filter with `proxy-wasm-cpp-sdk` on docker.
 We first need to build the image of the SDK from its repository on the `envoy-release/v1.15` branch:
 ```
 git clone git@github.com:proxy-wasm/proxy-wasm-cpp-sdk.git
@@ -16,10 +16,10 @@ Then from the root of this repository, build the WASM module with:
 ```
 docker run -v $PWD:/work -w /work wasmsdk:v2 /build_wasm.sh
 ```
-After the compilation completes, you should find a `WAF_wasm.wasm` file in the repository.
+After the compilation completes, you should find a `WAF_wasm.wasm` file in the repository directory.
 
 ## Deploy
-We can mount the WASM module onto the docker image of Istio proxy to run it.
+We can mount the WASM filter onto the docker image of Istio proxy to run it.
 Pull the following image of Istio proxy:
 ```
 docker pull istio/proxyv2:1.7.0-beta.2
@@ -51,9 +51,26 @@ Unit tests for individual utility functions in the WAF WASM extension are
 available in `test` directory. To run them, execute from the root of the
 repository:
 ```
-source ./build_test.sh
+source ./unit_test.sh
 ```
 
+## Integration Tests
+
+Before conducting integration tests, make sure that the WASM binary file has been built and the `istio/proxy` docker image has been pulled according to instructions in previous sections. The tests can be run by executing the following script from the root of
+the repository:
+```
+source ./integration_test.sh
+```
+In the integration tests, the WASM filter is configured onto Istio proxy. The
+proxy receives messages from an http client and forwards them to an http server.
+Both the client and the server are set up in GoLang. We monitor all
+communications between the client, proxy, and server to see if the WASM filter
+is working as expected.
+
+The source code of the integration tests are in `integration_test`:
+`integration_test.go` contains the test framework that handles the sending and
+receiving of requests, and `main.go` contains the input and expectations of
+specific test cases.
 
 ## Configuration
 The rules for SQL injection detection can be configured from YAML files. An example of configuration can be found in `envoy-config.yaml`. Configuration are passsed through the field `config.config.configuration.value` in the yaml file in JSON syntax as below:

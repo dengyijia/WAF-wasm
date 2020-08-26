@@ -71,23 +71,22 @@ func TestForConfig(config Config) {
 	}
 
 	// body
-	/*
 	for _, key := range config.body_include {
 		request = NewTestRequest()
-		request.body.Add(key, sqli_string)
+		request.body.Set(key, sqli_string)
 		request.sqli = true
 		suite.requests["Request with SQL injection in included body param: " + key] = request
-	}*/
+	}
 	for _, key := range config.body_exclude {
 		request = NewTestRequest()
-		request.body.Add(key, sqli_string)
+		request.body.Set(key, sqli_string)
 		request.sqli = false
 		suite.requests["Request with SQL injection in excluded body param: " + key] = request
 	}
 	/*
 	if config.body_include_bool == false {
 		request = NewTestRequest()
-		request.body.Add(sqli_string, "value")
+		request.body.Set(sqli_string, "value")
 		request.sqli = true
 		suite.requests["Request with SQL injection in body key"] = request
 	}*/

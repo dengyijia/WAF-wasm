@@ -136,10 +136,12 @@ FilterHeadersStatus ExampleContext::onRequestHeaders(uint32_t, bool) {
   // record body content type to context
   content_type_ = getRequestHeader("content-type")->toString();
 
+  //continueRequest();
   return FilterHeadersStatus::Continue;
 }
 
 FilterDataStatus ExampleContext::onRequestBody(size_t body_buffer_length, bool end_of_stream) {
+  //continueRequest();
   auto body = getBufferBytes(WasmBufferType::HttpRequestBody, 0, body_buffer_length);
   auto body_str = std::string(body->view());
   LOG_TRACE(std::string("onRequestBody ") + body_str);
@@ -168,8 +170,6 @@ FilterHeadersStatus ExampleContext::onResponseHeaders(uint32_t, bool) {
   for (auto& p : pairs) {
     LOG_INFO(std::string(p.first) + std::string(" -> ") + std::string(p.second));
   }
-  addResponseHeader("branch", "libinjection-config");
-  replaceResponseHeader("location", "envoy-wasm");
   return FilterHeadersStatus::Continue;
 }
 
