@@ -63,6 +63,7 @@ type TestRequest struct {
 	// the expected sqli detection result for the proxy
 	// if true, the request contains sqli
 	sqli bool
+	sqli_body bool
 }
 
 /*
@@ -91,7 +92,9 @@ func (t TestSuite) RunRequests() {
 	t.CloseServer()
 }
 
-
+/*
+* Initiate a new test request with default content
+*/
 func NewTestRequest() TestRequest {
 	return TestRequest{
 		path: "/",
@@ -100,12 +103,13 @@ func NewTestRequest() TestRequest {
 		cookies: Map{"cookie-key-0": "cookie-val-0"},
 		body: url.Values{"body-key-0": {"body-val-0"}},
 		sqli: false,
+		sqli_body: false,
 	}
 }
 
 /*
 * Run a given test in a test suite
-* assuming the proxy has been running
+* assuming the server and the proxy has been running
 */
 func (t TestSuite) RunTestRequest(test_name string, test TestRequest) {
 	result := t.Eval(test)
@@ -120,7 +124,7 @@ func (t TestSuite) RunTestRequest(test_name string, test TestRequest) {
 * Initialize and Start the test server
 */
 func (suite TestSuite) StartServer() {
-	// set path handler function
+	// set path handler functions
 	serveMux := http.NewServeMux()
 	serveMux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		body, _ := ioutil.ReadAll(r.Body)
@@ -145,6 +149,9 @@ func (suite TestSuite) StartServer() {
 	fmt.Println("Server started")
 }
 
+/*
+* Close the test server
+*/
 func (t TestSuite) CloseServer() {
 	http.Get(t.proxy_url + "/shutdown")
 	close(t.request_received)
@@ -167,7 +174,7 @@ func (t TestSuite) CheckProxyConnection() {
 	}
 	defer response.Body.Close()
 
-	// check that proxy reply comes from server
+	// check that proxy reply indeed comes from server
 	response_body, _ := ioutil.ReadAll(response.Body)
 	if response.StatusCode != 200 || string(response_body) != t.server_message {
 		fmt.Println("Proxy connection failed")
@@ -228,11 +235,18 @@ func (suite TestSuite) Eval(test TestRequest) bool {
 	// verify the request and the response
 	if test.sqli {
 		// if the request contains SQL injection, it should be blocked
-		// the server should never receive any request
-		if received != nil {
+		// if the SQL injection is in body, the server should receive request with empty body
+		// if the SQL injection is in header, the server should never receive any request
+		if test.sqli_body {
+			if received_body != "" {
+				fmt.Println("Request with SQL injection in body was not blocked")
+				fmt.Println(received_body)
+				return false
+			}
+		} else if received != nil {
 			fmt.Println("Request with SQL injection was not blocked")
 			fmt.Println(response.Status)
-			//return false
+			return false
 		}
 
 		// the client should receive a response from the proxy with status 403 Forbidden

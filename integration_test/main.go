@@ -3,16 +3,28 @@ import (
 	"fmt"
 )
 
+// Config struct reflects the expectations for the WASM filter configuration
 type Config struct {
 	config_name string
 	proxy_url string
-	header_include_bool bool
+
+	// the headers that are expected to be included/excluded in detection
 	header_include []string
 	header_exclude []string
+
+	// true if the config for cookie contains `include`
+	// in this case, only the cookies specified in cookie_included will
+	// be included in detection
 	cookie_include_bool bool
+
+	// the cookie names that are expected to be included/excluded in detection
 	cookie_include []string
 	cookie_exclude []string
+
+	// true if the config for body contains `include`
 	body_include_bool bool
+
+	// the body param keys that are expected to be included/excluded in detection
 	body_include []string
 	body_exclude []string
 }
@@ -71,35 +83,36 @@ func TestForConfig(config Config) {
 	}
 
 	// body
-	/*for _, key := range config.body_include {
+	for _, key := range config.body_include {
 		request = NewTestRequest()
 		request.body.Set(key, sqli_string)
 		request.sqli = true
+		request.sqli_body = true
 		suite.requests["Request with SQL injection in included body param: " + key] = request
-	}*/
+	}
 	for _, key := range config.body_exclude {
 		request = NewTestRequest()
 		request.body.Set(key, sqli_string)
 		request.sqli = false
 		suite.requests["Request with SQL injection in excluded body param: " + key] = request
 	}
-	/*
 	if config.body_include_bool == false {
 		request = NewTestRequest()
 		request.body.Set(sqli_string, "value")
 		request.sqli = true
+		request.sqli_body = true
 		suite.requests["Request with SQL injection in body key"] = request
-	}*/
+	}
 	fmt.Println("------ Tests for ", config.config_name, "Config starts ------")
 	suite.RunRequests()
 	fmt.Println("------ All tests for ", config.config_name, "Config passed ------")
 }
 
 func TestDefault() {
+	// This test corresponds to the configuration in envoy-default.yaml
 	c := Config{
 		config_name: "Default",
 		proxy_url: "http://proxy-default:8081",
-		header_include_bool: true,
 		header_include: []string{"referer", "user-agent"},
 		header_exclude: []string{"header-key-1"},
 		cookie_include_bool: false,
@@ -113,10 +126,10 @@ func TestDefault() {
 }
 
 func TestInclude() {
+	// This test corresponds to the configuration in envoy-include.yaml
 	c := Config{
 		config_name: "Include",
 		proxy_url: "http://proxy-include:8082",
-		header_include_bool: true,
 		header_include: []string{"header-key-0", "referer", "user-agent"},
 		header_exclude: []string{"header-key-1"},
 		cookie_include_bool: true,
@@ -130,10 +143,10 @@ func TestInclude() {
 }
 
 func TestExclude() {
+	// This test corresponds to the configuration in envoy-exclude.yaml
 	c := Config{
 		config_name: "Exclude",
 		proxy_url: "http://proxy-exclude:8083",
-		header_include_bool: false,
 		header_include: []string{"user-agent"},
 		header_exclude: []string{"header-key-0", "referer"},
 		cookie_include_bool: false,
