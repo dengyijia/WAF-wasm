@@ -4,7 +4,7 @@ static_resources:
     address:
       socket_address:
         address: 0.0.0.0
-        port_value: 8000
+        port_value: 8083
     filter_chains:
     - filters:
       - name: envoy.http_connection_manager
@@ -47,7 +47,7 @@ static_resources:
                         "exclude": ["header-key-0", "referer"]
                       },
                       "cookie": {
-                        "exclude": ["cookie-name-0"]
+                        "exclude": ["cookie-key-0"]
                       }
                     }
           - name: envoy.router
