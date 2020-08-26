@@ -1,6 +1,8 @@
-# WAF extension on Envoy proxy
+# WAF WASM filter on Envoy proxy
 
-This repository is forked from [`envoyproxy/envoy-wasm`](https://github.com/envoyproxy/envoy-wasm), and the example WASM extension in the envoy-wasm repository is modified to work as a Web Application Firewall(WAF) that can detect SQL injection. The rules for detection are aligned with ModSecurity rules [942100](https://github.com/coreruleset/coreruleset/blob/v3.3/dev/rules/REQUEST-942-APPLICATION-ATTACK-SQLI.conf#L45) and [942101](https://github.com/coreruleset/coreruleset/blob/v3.3/dev/rules/REQUEST-942-APPLICATION-ATTACK-SQLI.conf#L1458), and SQL injection is detected with methods from [libinjection](https://github.com/client9/libinjection).
+This repository contains the source code for a WebAssembly Module(WASM) that can work as a Web Application Firewall(WAF) on envoy proxy. The filter parses incoming http requests to the proxy. If a SQL injection attack is detected, the request will be blocked from upstream servers.
+
+The rules for SQL injection detection are aligned with ModSecurity rules [942100](https://github.com/coreruleset/coreruleset/blob/v3.3/dev/rules/REQUEST-942-APPLICATION-ATTACK-SQLI.conf#L45) and [942101](https://github.com/coreruleset/coreruleset/blob/v3.3/dev/rules/REQUEST-942-APPLICATION-ATTACK-SQLI.conf#L1458), and strings with potential SQL injection attacks are parsed with methods from [libinjection](https://github.com/client9/libinjection).
 
 ## Build
 
@@ -9,7 +11,7 @@ We first need to build the image of the SDK from its repository on the `envoy-re
 ```
 git clone git@github.com:proxy-wasm/proxy-wasm-cpp-sdk.git
 cd proxy-wasm-cpp-sdk
-git checkout envoy-release/v1.15 
+git checkout envoy-release/v1.15
 docker build -t wasmsdk:v2 -f Dockerfile-sdk .
 ```
 Then from the root of this repository, build the WASM module with:
