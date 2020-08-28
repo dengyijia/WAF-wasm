@@ -85,3 +85,5 @@ In default setting, the `Referrer` and `User-Agent` headers will be checked for 
 ### Cookies
 In default setting, all cookie names will be checked. `include` and `exclude` work exactly the same as for query parameters.
 
+## Indentation
+Run `make indent` to format all C++ files.
