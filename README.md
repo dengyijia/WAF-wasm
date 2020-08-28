@@ -53,7 +53,7 @@ Unit tests for individual utility functions in the WAF WASM extension are
 available in `test` directory. To run them, execute from the root of the
 repository:
 ```
-source ./unit_test.sh
+./unit_test.sh
 ```
 
 ## Integration Tests
@@ -61,7 +61,7 @@ source ./unit_test.sh
 Before conducting integration tests, make sure that the WASM binary file has been built and the `istio/proxy` docker image has been pulled according to instructions in previous sections. The tests can be run by executing the following script from the root of
 the repository:
 ```
-source ./integration_test.sh
+./integration_test.sh
 ```
 In the integration tests, the WASM filter is configured onto Istio proxy. The
 proxy receives messages from an http client and forwards them to an http server.
