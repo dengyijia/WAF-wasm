@@ -159,7 +159,11 @@ func (suite TestSuite) StartServer() {
 * Close the test server
 */
 func (t TestSuite) CloseServer() {
-	http.Get(t.proxy_url + "/shutdown")
+	_, err := http.Get(t.proxy_url + "/shutdown")
+	if err != nil {
+		fmt.Println("Server shutdown failed:", err)
+		fail()
+	}
 	close(t.request_received)
 	close(t.body_string_received)
 }
