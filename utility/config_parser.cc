@@ -12,12 +12,9 @@ std::string config_field_to_string(bool include, Keys keys) {
 }
 
 std::string Config::to_string() {
-  std::string param_str =
-      "\nquery param " + config_field_to_string(param_include, params);
-  std::string header_str =
-      "\nheaders " + config_field_to_string(header_include, headers);
-  std::string cookie_str =
-      "\ncookies " + config_field_to_string(cookie_include, cookies);
+  std::string param_str = "\nquery param " + config_field_to_string(param_include, params);
+  std::string header_str = "\nheaders " + config_field_to_string(header_include, headers);
+  std::string cookie_str = "\ncookies " + config_field_to_string(cookie_include, cookies);
   return "config: " + content_type + param_str + header_str + cookie_str;
 }
 
@@ -31,8 +28,7 @@ std::string Config::to_string() {
  *   true on success
  *   false on failure (if both 'include' and 'exclude' are present in the field)
  */
-bool validate_config_field(Json field, bool* include, Keys* keys,
-                           std::string* log) {
+bool validate_config_field(Json field, bool* include, Keys* keys, std::string* log) {
   if (field.is_null()) {
     return true;
   }
@@ -74,19 +70,16 @@ bool parseConfig(std::string configuration, Config* config, std::string* log) {
            "supported");
       return false;
     }
-    if (!validate_config_field(query_param, &config->param_include,
-                               &config->params, log)) {
+    if (!validate_config_field(query_param, &config->param_include, &config->params, log)) {
       return false;
     }
   }
   // validate cookie configuration
-  if (!validate_config_field(j["cookie"], &config->cookie_include,
-                             &config->cookies, log)) {
+  if (!validate_config_field(j["cookie"], &config->cookie_include, &config->cookies, log)) {
     return false;
   }
   // validate header configuration
-  if (!validate_config_field(j["header"], &config->header_include,
-                             &config->headers, log)) {
+  if (!validate_config_field(j["header"], &config->header_include, &config->headers, log)) {
     return false;
   }
   *log = "config parsed into context ->" + config->to_string();

@@ -36,10 +36,8 @@ TEST matchKeys(Keys arg1, Keys arg2) {
 
 // check equality of two query params objects
 static int ParamsEq(const void* expected, const void* resulted, void* udata) {
-  const QueryParams* expected_params =
-      static_cast<const QueryParams*>(expected);
-  const QueryParams* resulted_params =
-      static_cast<const QueryParams*>(resulted);
+  const QueryParams* expected_params = static_cast<const QueryParams*>(expected);
+  const QueryParams* resulted_params = static_cast<const QueryParams*>(resulted);
   if (expected_params->size() != resulted_params->size()) {
     return false;
   }

@@ -20,8 +20,7 @@ TEST detectSQLiTest() {
 // Check that correct keys are picked for detection
 TEST pickKeysTest(void) {
   std::string log;
-  QueryParams params(
-      {{"param1", "value1"}, {"param2", "value2"}, {"param3", "value3"}});
+  QueryParams params({{"param1", "value1"}, {"param2", "value2"}, {"param3", "value3"}});
 
   // empty inclusion
   Keys keys0({});

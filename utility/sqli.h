@@ -23,8 +23,7 @@ bool detectSQLi(std::string input);
  * Output
  *  a set of keys for SQL injection detection
  */
-Keys pickKeysForDetection(QueryParams params, bool include, Keys keys,
-                          std::string* log);
+Keys pickKeysForDetection(QueryParams params, bool include, Keys keys, std::string* log);
 
 /**
  * Detect SQL injection on given parameter pairs with configuration
@@ -38,5 +37,4 @@ Keys pickKeysForDetection(QueryParams params, bool include, Keys keys,
  * Output
  *   true if a SQL injection is detected, false if not
  */
-bool detectSQLiOnParams(QueryParams params, bool include, Keys keys,
-                        std::string* log);
+bool detectSQLiOnParams(QueryParams params, bool include, Keys keys, std::string* log);

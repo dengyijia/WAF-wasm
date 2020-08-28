@@ -36,8 +36,7 @@ inline std::string slice(std::string str, int start, int end) {
   return str.substr(start, end - start);
 }
 
-QueryParams parseParameters(std::string data, size_t start,
-                            bool cookie = false) {
+QueryParams parseParameters(std::string data, size_t start, bool cookie = false) {
   QueryParams params;
   std::string delim = "&";
   if (cookie) {
@@ -88,6 +87,4 @@ QueryParams parsePath(std::string path) {
 
 QueryParams parseBody(std::string body) { return parseParameters(body, 0); }
 
-QueryParams parseCookie(std::string cookie) {
-  return parseParameters(cookie, 0, true);
-}
+QueryParams parseCookie(std::string cookie) { return parseParameters(cookie, 0, true); }
