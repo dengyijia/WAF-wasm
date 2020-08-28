@@ -75,7 +75,7 @@ func TestForConfig(config Config) {
 		request.sqli = false
 		suite.requests["Request with SQL injection in excluded cookie: " + key] = request
 	}
-	if config.cookie_include_bool == false {
+	if !config.cookie_include_bool {
 		request = NewTestRequest()
 		request.cookies[sqli_string] = "value"
 		request.sqli = true
@@ -96,7 +96,7 @@ func TestForConfig(config Config) {
 		request.sqli = false
 		suite.requests["Request with SQL injection in excluded body param: " + key] = request
 	}
-	if config.body_include_bool == false {
+	if !config.body_include_bool {
 		request = NewTestRequest()
 		request.body.Set(sqli_string, "value")
 		request.sqli = true
