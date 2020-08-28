@@ -145,7 +145,13 @@ func (suite TestSuite) StartServer() {
 		Addr: suite.server_port,
 		Handler: serveMux,
 	}
-	go suite.server.ListenAndServe()
+	go func() {
+		err := suite.server.ListenAndServe()
+		if err != http.ErrServerClosed {
+			fmt.Println("Server shutdown unexpectedly:", err)
+			fail()
+		}
+	} ()
 	fmt.Println("Server started")
 }
 
