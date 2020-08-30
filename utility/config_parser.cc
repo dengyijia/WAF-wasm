@@ -12,10 +12,11 @@ std::string config_field_to_string(bool include, Keys keys) {
 }
 
 std::string Config::to_string() {
-  std::string param_str = "\nquery param " + config_field_to_string(param_include, params);
+  std::string body_str = "\nbody " + config_field_to_string(body_include, body);
+  std::string path_str = "\npath " + config_field_to_string(path_include, path);
   std::string header_str = "\nheaders " + config_field_to_string(header_include, headers);
   std::string cookie_str = "\ncookies " + config_field_to_string(cookie_include, cookies);
-  return "config: " + content_type + param_str + header_str + cookie_str;
+  return "config: " + content_type + body_str + header_str + cookie_str;
 }
 
 /*
@@ -39,7 +40,7 @@ bool validate_config_field(Json field, bool* include, Keys* keys, std::string* l
   if (!field["include"].is_null()) {
     *include = true;
     auto include_keys = field["include"].get<Keys>();
-    keys->insert(include_keys.begin(), include_keys.end());
+    *keys = field["include"].get<Keys>();
   }
   if (!field["exclude"].is_null()) {
     *include = false;
@@ -56,11 +57,11 @@ bool parseConfig(std::string configuration, Config* config, std::string* log) {
     return false;
   }
 
-  // validate query param configuration
-  auto query_param = j["query_param"];
+  // validate body param configuration
+  auto query_param = j["body"];
   if (!query_param.is_null()) {
     if (query_param["content-type"].is_null()) {
-      *log = "missing content-type field under query_param";
+      *log = "missing content-type field under body";
       return false;
     }
     std::string content_type = query_param["content-type"].get<std::string>();
@@ -70,10 +71,16 @@ bool parseConfig(std::string configuration, Config* config, std::string* log) {
            "supported");
       return false;
     }
-    if (!validate_config_field(query_param, &config->param_include, &config->params, log)) {
+    if (!validate_config_field(query_param, &config->body_include, &config->body, log)) {
       return false;
     }
   }
+
+  // validate path param configuration
+  if (!validate_config_field(j["path"], &config->path_include, &config->path, log)) {
+    return false;
+  }
+
   // validate cookie configuration
   if (!validate_config_field(j["cookie"], &config->cookie_include, &config->cookies, log)) {
     return false;

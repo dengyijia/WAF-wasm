@@ -14,8 +14,11 @@ using Json = nlohmann::json;
 struct Config {
   std::string content_type{URLENCODED};
 
-  bool param_include{false};
-  Keys params{};
+  bool body_include{false};
+  Keys body{};
+
+  bool path_include{false};
+  Keys path{};
 
   bool header_include{true};
   Keys headers{"referer", "user-agent"};

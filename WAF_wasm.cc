@@ -126,7 +126,7 @@ FilterHeadersStatus ExampleContext::onRequestHeaders(uint32_t, bool) {
   std::string path = getRequestHeader(":path")->toString();
   QueryParams path_params = parsePath(path);
   LOG_TRACE("Path parsed: " + printParams(path_params));
-  if (detectSQLiOnParams(cookies, false, {}, &log)) {
+  if (detectSQLiOnParams(cookies, config_.path_include, config_.path, &log)) {
     onSQLi("path");
     return FilterHeadersStatus::StopIteration;
   }
@@ -149,10 +149,10 @@ FilterDataStatus ExampleContext::onRequestBody(size_t body_buffer_length, bool e
 
   // detect SQL injection in query parameters
   std::string log;
-  auto query_params = parseBody(body_str);
-  LOG_TRACE("query params parsed: " + printParams(query_params));
-  if (detectSQLiOnParams(query_params, config_.param_include, config_.params, &log)) {
-    onSQLi("body query params");
+  auto body_params = parseBody(body_str);
+  LOG_TRACE("body parsed: " + printParams(body_params));
+  if (detectSQLiOnParams(body_params, config_.body_include, config_.body, &log)) {
+    onSQLi("body");
     return FilterDataStatus::StopIterationAndBuffer;
   }
   LOG_TRACE("body sqli detection finished:\n" + log);
