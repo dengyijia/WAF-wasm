@@ -136,12 +136,10 @@ FilterHeadersStatus ExampleContext::onRequestHeaders(uint32_t, bool) {
   // record body content type to context
   content_type_ = getRequestHeader("content-type")->toString();
 
-  //continueRequest();
   return FilterHeadersStatus::Continue;
 }
 
 FilterDataStatus ExampleContext::onRequestBody(size_t body_buffer_length, bool end_of_stream) {
-  //continueRequest();
   auto body = getBufferBytes(WasmBufferType::HttpRequestBody, 0, body_buffer_length);
   auto body_str = std::string(body->view());
   LOG_TRACE(std::string("onRequestBody ") + body_str);

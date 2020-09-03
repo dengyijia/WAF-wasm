@@ -1,6 +1,6 @@
 # WAF WASM filter on Envoy proxy
 
-This repository contains the source code for a WebAssembly Module(WASM) that can work as a Web Application Firewall(WAF) on envoy proxy. The filter parses incoming http requests to the proxy. If a SQL injection attack is detected, the request will be blocked from upstream servers.
+This repository contains the source code for a WebAssembly Module(WASM) that can work as a Web Application Firewall(WAF) on Envoy proxy and Istio service mesh. The filter parses incoming http requests to the proxy. If a SQL injection attack is detected in the header part of the request (e.g. in header fields, cookies, or path), the filter will block the request from upstream servers. If a SQL injection attack is detected in the body part of the request, the filter will still forward the headers to the server, but the body will be empty and the connection will be closed. In both cases of attack, the filter will send a HTTP 403 Forbidden response to the client.
 
 The rules for SQL injection detection are aligned with ModSecurity rules [942100](https://github.com/coreruleset/coreruleset/blob/v3.3/dev/rules/REQUEST-942-APPLICATION-ATTACK-SQLI.conf#L45) and [942101](https://github.com/coreruleset/coreruleset/blob/v3.3/dev/rules/REQUEST-942-APPLICATION-ATTACK-SQLI.conf#L1458), and strings with potential SQL injection attacks are parsed with methods from [libinjection](https://github.com/client9/libinjection).
 
