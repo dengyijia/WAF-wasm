@@ -62,8 +62,8 @@ type TestRequest struct {
 
 	// the expected sqli detection result for the proxy
 	// if true, the request contains sqli
-	sqli      bool
-	sqli_body bool
+	containsSQLi      bool
+	containsSQLiInBody bool
 }
 
 /*
@@ -102,8 +102,8 @@ func NewTestRequest() TestRequest {
 		headers:    Map{"header-key-0": "header-val-0"},
 		cookies:    Map{"cookie-key-0": "cookie-val-0"},
 		body:       url.Values{"body-key-0": {"body-val-0"}},
-		sqli:       false,
-		sqli_body:  false,
+		containsSQLi:       false,
+		containsSQLiInBody:  false,
 	}
 }
 
@@ -245,11 +245,11 @@ func (suite TestSuite) Eval(test TestRequest) bool {
 	}
 
 	// verify the request and the response
-	if test.sqli {
+	if test.containsSQLi {
 		// if the request contains SQL injection, it should be blocked
 		// if the SQL injection is in body, the server should receive request with empty body
 		// if the SQL injection is in header, the server should never receive any request
-		if test.sqli_body {
+		if test.containsSQLiInBody {
 			if receivedBody != "" {
 				fmt.Println("Request with SQL injection in body was not blocked")
 				fmt.Println(receivedBody)
