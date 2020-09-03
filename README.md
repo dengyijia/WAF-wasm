@@ -51,7 +51,7 @@ Unit tests for individual utility functions in the WAF WASM extension are
 available in `test` directory. To run them, execute from the root of the
 repository:
 ```
-source ./build_test.sh
+sh ./build_test.sh
 ```
 
 
