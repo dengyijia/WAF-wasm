@@ -96,7 +96,10 @@ kubectl apply -f filter.yaml
 ```
 
 ### Run the Bookinfo application
-Now you can run the Bookinfo application with the instructions on istio.io.
+Now you can run the Bookinfo application with:
+```
+kubectl apply -f samples/bookinfo/platform/kube/bookinfo.yaml
+```
 There are several things you can do to verify that the filter has been deployed.
 
 First, check that the `WAF_wasm.wasm` file was mounted correctly in the Istio
