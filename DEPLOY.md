@@ -19,6 +19,7 @@ Currently, we have two steps in the deployment:
 the volume of Istio proxy 
 2. Patch the configuration of the Istio proxy to use
 the filter
+
 In the future release of Istio 1.7.1, there will be tools to complete the
 deployment in one step.
 
