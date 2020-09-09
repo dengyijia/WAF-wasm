@@ -1,0 +1,199 @@
+{
+  "RunType": "HTTP",
+  "Labels": "WAF_wasm_undeployed_jitter=True_connection=16_qps=10",
+  "StartTime": "2020-09-09T05:07:29.683052595Z",
+  "RequestedQPS": "10",
+  "RequestedDuration": "4m0s",
+  "ActualQPS": 9.99307577027618,
+  "ActualDuration": 240166296661,
+  "NumThreads": 16,
+  "Version": "1.6.9-pre",
+  "DurationHistogram": {
+    "Count": 2400,
+    "Min": 0.012729366,
+    "Max": 0.147039904,
+    "Sum": 72.07865148500001,
+    "Avg": 0.030032771452083336,
+    "StdDev": 0.016058023977529437,
+    "Data": [
+      {
+        "Start": 0.012729366,
+        "End": 0.014,
+        "Percent": 0.2916666666666667,
+        "Count": 7
+      },
+      {
+        "Start": 0.014,
+        "End": 0.016,
+        "Percent": 2.5,
+        "Count": 53
+      },
+      {
+        "Start": 0.016,
+        "End": 0.018000000000000002,
+        "Percent": 8.75,
+        "Count": 150
+      },
+      {
+        "Start": 0.018000000000000002,
+        "End": 0.02,
+        "Percent": 20.291666666666668,
+        "Count": 277
+      },
+      {
+        "Start": 0.02,
+        "End": 0.025,
+        "Percent": 50.666666666666664,
+        "Count": 729
+      },
+      {
+        "Start": 0.025,
+        "End": 0.03,
+        "Percent": 69.83333333333333,
+        "Count": 460
+      },
+      {
+        "Start": 0.03,
+        "End": 0.035,
+        "Percent": 80.25,
+        "Count": 250
+      },
+      {
+        "Start": 0.035,
+        "End": 0.04,
+        "Percent": 85.20833333333333,
+        "Count": 119
+      },
+      {
+        "Start": 0.04,
+        "End": 0.045,
+        "Percent": 88.08333333333333,
+        "Count": 69
+      },
+      {
+        "Start": 0.045,
+        "End": 0.05,
+        "Percent": 89.375,
+        "Count": 31
+      },
+      {
+        "Start": 0.05,
+        "End": 0.06,
+        "Percent": 91.625,
+        "Count": 54
+      },
+      {
+        "Start": 0.06,
+        "End": 0.07,
+        "Percent": 96.79166666666667,
+        "Count": 124
+      },
+      {
+        "Start": 0.07,
+        "End": 0.08,
+        "Percent": 98.75,
+        "Count": 47
+      },
+      {
+        "Start": 0.08,
+        "End": 0.09,
+        "Percent": 99.25,
+        "Count": 12
+      },
+      {
+        "Start": 0.09,
+        "End": 0.1,
+        "Percent": 99.45833333333333,
+        "Count": 5
+      },
+      {
+        "Start": 0.1,
+        "End": 0.12,
+        "Percent": 99.54166666666667,
+        "Count": 2
+      },
+      {
+        "Start": 0.12,
+        "End": 0.14,
+        "Percent": 99.75,
+        "Count": 5
+      },
+      {
+        "Start": 0.14,
+        "End": 0.147039904,
+        "Percent": 100,
+        "Count": 6
+      }
+    ],
+    "Percentiles": [
+      {
+        "Percentile": 50,
+        "Value": 0.024890260631001374
+      },
+      {
+        "Percentile": 75,
+        "Value": 0.03248
+      },
+      {
+        "Percentile": 90,
+        "Value": 0.05277777777777778
+      },
+      {
+        "Percentile": 99,
+        "Value": 0.08499999999999999
+      },
+      {
+        "Percentile": 99.9,
+        "Value": 0.14422394240000017
+      }
+    ]
+  },
+  "Exactly": 0,
+  "Jitter": true,
+  "RetCodes": {
+    "200": 2400
+  },
+  "Sizes": {
+    "Count": 2400,
+    "Min": 4357,
+    "Max": 5358,
+    "Sum": 12053613,
+    "Avg": 5022.33875,
+    "StdDev": 470.4639623093057,
+    "Data": [
+      {
+        "Start": 4357,
+        "End": 4500,
+        "Percent": 33.333333333333336,
+        "Count": 800
+      },
+      {
+        "Start": 5000,
+        "End": 5358,
+        "Percent": 100,
+        "Count": 1600
+      }
+    ],
+    "Percentiles": null
+  },
+  "HeaderSizes": {
+    "Count": 2400,
+    "Min": 174,
+    "Max": 175,
+    "Sum": 417613,
+    "Avg": 174.00541666666666,
+    "StdDev": 0.07339840860554044,
+    "Data": [
+      {
+        "Start": 174,
+        "End": 175,
+        "Percent": 100,
+        "Count": 2400
+      }
+    ],
+    "Percentiles": null
+  },
+  "URL": "http://172.18.0.2:30388/productpage",
+  "SocketCount": 16,
+  "AbortOn": 0
+}
