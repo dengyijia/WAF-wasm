@@ -29,7 +29,7 @@ modify the path as it is on your local machine).
 ```
 kubectl create cm waf-wasm-filter --from-file=<path-to-WAF-wasm-repo>/WAF_wasm.wasm
 ```
-Using the configuration map, add user volume annotations to the `productpage` deployment of
+Add user volume annotations to the `productpage` deployment of
 `samples/bookinfo/platform/kube/bookinfo.yaml` (`productpage` is the last service
 configured in the file). The `spec/template/metadata` section of your
 `bookinfo.yaml` should look like this:
