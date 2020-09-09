@@ -1,6 +1,6 @@
 # WAF WASM filter on Envoy proxy
 
-This repository contains the source code for a WebAssembly Module(WASM) that can work as a Web Application Firewall(WAF) on Envoy proxy and Istio service mesh. The filter parses incoming http requests to the proxy. If a SQL injection attack is detected in the header part of the request (e.g. in header fields, cookies, or path), the filter will block the request from upstream servers. If a SQL injection attack is detected in the body part of the request, the filter will still forward the headers to the server, but the body will be empty and the connection will be closed. In both cases of attack, the filter will send a HTTP 403 Forbidden response to the client.
+This repository contains the source code for a WebAssembly Module(WASM) that can work as a Web Application Firewall(WAF) on Envoy proxy and Istio service mesh. The filter parses incoming http requests to the proxy. If a SQL injection attack is detected in the header part of the request (e.g. in header fields, cookies, or path), the filter will block the request from upstream servers. If a SQL injection attack is detected in the body part of the request, the filter will forward the request header with an empty body and close the connection. In both cases of attack, the filter will send a HTTP 403 Forbidden response to the client.
 
 The rules for SQL injection detection are aligned with ModSecurity rules [942100](https://github.com/coreruleset/coreruleset/blob/v3.3/dev/rules/REQUEST-942-APPLICATION-ATTACK-SQLI.conf#L45) and [942101](https://github.com/coreruleset/coreruleset/blob/v3.3/dev/rules/REQUEST-942-APPLICATION-ATTACK-SQLI.conf#L1458), and strings with potential SQL injection attacks are parsed with methods from [libinjection](https://github.com/client9/libinjection).
 
@@ -47,6 +47,8 @@ curl -d "val=-1%27+and+1%3D1%0D%0A" -v localhost:8000
 You will receive a response with HTTP code 403 Forbidden. The body of the http request above has the parameter `val` with the value `-1' and 1=1` in URL
 encoding.
 
+See [DEPLOY.md](https://github.com/dengyijia/WAF-wasm/blob/envoy-release/v1.15-integration-test/DEPLOY.md) for instructions to deploy the filter on Istio applications.
+
 ## Unit Tests
 
 Unit tests for individual utility functions in the WAF WASM extension are
@@ -74,6 +76,8 @@ The source code of the integration tests are in `integration_test`:
 receiving of requests, and `main.go` contains the input and expectations of
 specific test cases.
 
+## Performance Tests
+See [performance_test](https://github.com/dengyijia/WAF-wasm/tree/envoy-release/v1.15-integration-test/performance_test).
 ## Configuration
 The rules for SQL injection detection can be configured from YAML files. An example of configuration can be found in `envoy-config.yaml`. Configuration are passsed through the field `config.config.configuration.value` in the yaml file in JSON syntax as below:
 
