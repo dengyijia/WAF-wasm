@@ -8,7 +8,7 @@ There are two pre-requisites:
 1. Follow the instructions in README.md to build the
    WASM filter with `proxy-wasm-cpp-sdk`. You should have a
    `WAF_wasm.wasm` file at the root of this repository.
-2. Install Istio 1.7.0 and can run the sample Bookinfo
+2. Install Istio 1.7.0 and make sure you can run the sample Bookinfo
    application following the instructions
    [here](https://istio.io/latest/docs/setup/getting-started/) on istio.io.
    Before starting on the deployment of this WASM filter, clean up the Bookinfo
