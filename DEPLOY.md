@@ -1,6 +1,6 @@
 # Deployment on Istio
 
-We will walk through how to deploy this WAF WASM filter on Istio through the
+We will walk through how to deploy the WAF WASM filter on Istio through the
 sample application Bookinfo. Specifically, we will deploy the filter on the
 `productpage` service of the Bookinfo application.
 
@@ -12,8 +12,7 @@ There are two pre-requisites:
    application following the instructions
    [here](https://istio.io/latest/docs/setup/getting-started/) on istio.io.
    Before starting on the deployment of this WASM filter, clean up the Bookinfo
-   application with the command ```samples/bookinfo/platform/kube/cleanup.sh
-```
+   application with the command ```samples/bookinfo/platform/kube/cleanup.sh```
 
 Currently, we have two steps in the deployment: mount the `.wasm` file onto
 the volume of Istio proxy and patch the configuration of the Istio proxy to use
