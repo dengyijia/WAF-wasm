@@ -43,7 +43,7 @@ metadata:
     sidecar.istio.io/userVolumeMount: '[{"mountPath":"/var/local/lib/wasm-filters","name":"wasmfilters-dir"}]'
 ```
 
-### Patch the Istio proxy config for filter
+### Patch the Istio proxy config for the additional filter
 Create a `filter.yaml` file with the following content:
 ```
 apiVersion: networking.istio.io/v1alpha3
