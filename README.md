@@ -47,7 +47,7 @@ curl -d "val=-1%27+and+1%3D1%0D%0A" -v localhost:8000
 You will receive a response with HTTP code 403 Forbidden. The body of the http request above has the parameter `val` with the value `-1' and 1=1` in URL
 encoding.
 
-See [DEPLOY.md](https://github.com/dengyijia/WAF-wasm/blob/envoy-release/v1.15-integration-test/DEPLOY.md) for instructions to deploy the filter on Istio applications.
+See [DEPLOY.md](DEPLOY.md) for instructions to deploy the filter on Istio applications.
 
 ## Unit Tests
 
@@ -77,7 +77,7 @@ receiving of requests, and `main.go` contains the input and expectations of
 specific test cases.
 
 ## Performance Tests
-See [performance_test](https://github.com/dengyijia/WAF-wasm/tree/envoy-release/v1.15-integration-test/performance_test).
+See [performance_test](performance_test).
 ## Configuration
 The rules for SQL injection detection can be configured from YAML files. An example of configuration can be found in `envoy-config.yaml`. Configuration are passsed through the field `config.config.configuration.value` in the yaml file in JSON syntax as below:
 
