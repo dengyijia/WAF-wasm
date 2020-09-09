@@ -2,7 +2,7 @@
 STATUS="$1"
 GATEWAY_URL="$2"
 LABEL_PREFIX="WAF_wasm_${STATUS}"
-DIR="performance_test"
+DIR="data"
 
 DEFAULT_QPS=1000
 DEFAULT_CONN=16
@@ -23,7 +23,7 @@ for jitter in ${JITTERS[@]}; do
 
   # test for varying number of queries per second
   for qps in ${QPS[@]}; do
-    LABEL="${LABEL_PREFIX}_jitter=${jitter}_connection=${DEFAULT_CONN}_qps=${qps}"
+    LABEL="${LABEL_PREFIX}_jitter=${jitter}_conn=${DEFAULT_CONN}_qps=${qps}"
     echo "Performance Test for $LABEL"
     fortio load -jitter=${jitter} -c ${DEFAULT_CONN} -qps ${qps} -t 240s -a -r 0.001 -httpbufferkb=128 -labels "${LABEL}"  http://${GATEWAY_URL}/productpage
   done
