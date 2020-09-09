@@ -14,9 +14,12 @@ There are two pre-requisites:
    Before starting on the deployment of this WASM filter, clean up the Bookinfo
    application with the command ```samples/bookinfo/platform/kube/cleanup.sh```
 
-Currently, we have two steps in the deployment: mount the `.wasm` file onto
-the volume of Istio proxy and patch the configuration of the Istio proxy to use
-the filter. In the future release of Istio 1.7.1, there will be tools to complete the
+Currently, we have two steps in the deployment: 
+1. Mount the `.wasm` file onto
+the volume of Istio proxy 
+2. Patch the configuration of the Istio proxy to use
+the filter
+In the future release of Istio 1.7.1, there will be tools to complete the
 deployment in one step.
 
 ### Mount the WASM file to Istio proxy
