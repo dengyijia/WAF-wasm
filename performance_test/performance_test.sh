@@ -18,14 +18,14 @@ for jitter in ${JITTERS[@]}; do
   for conn in ${CONN[@]}; do
     LABEL="${LABEL_PREFIX}_jitter=${jitter}_conn=${conn}_qps=${DEFAULT_QPS}"
     echo "Performance Test for $LABEL"
-    fortio load -jitter=${jitter} -c ${conn} -qps ${DEFAULT_QPS} -t 240s -a -r 0.001 -httpbufferkb=128 -labels "${LABEL}"  http://${GATEWAY_URL}/productpage
+    fortio load -jitter=${jitter} -c ${conn} -qps ${DEFAULT_QPS} -n 15000 -a -r 0.001 -httpbufferkb=128 -labels "${LABEL}"  http://${GATEWAY_URL}/productpage
   done
 
   # test for varying number of queries per second
   for qps in ${QPS[@]}; do
     LABEL="${LABEL_PREFIX}_jitter=${jitter}_conn=${DEFAULT_CONN}_qps=${qps}"
     echo "Performance Test for $LABEL"
-    fortio load -jitter=${jitter} -c ${DEFAULT_CONN} -qps ${qps} -t 240s -a -r 0.001 -httpbufferkb=128 -labels "${LABEL}"  http://${GATEWAY_URL}/productpage
+    fortio load -jitter=${jitter} -c ${DEFAULT_CONN} -qps ${qps} -n 15000 -a -r 0.001 -httpbufferkb=128 -labels "${LABEL}"  http://${GATEWAY_URL}/productpage
   done
 done
 cd ..

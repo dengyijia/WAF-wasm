@@ -1,6 +1,7 @@
 import json
 import glob
 import pandas as pd
+import sys
 
 class Plotter:
   def __init__(self):
@@ -31,7 +32,6 @@ class Plotter:
         data[str(percentile["Percentile"])].append(percentile["Value"])
 
     data = pd.DataFrame(data)
-
     # clean data with types
     data[self.PERCENTS] = data[self.PERCENTS].astype(float)
     data["RequestedQPS"] = data["RequestedQPS"].astype(int)
@@ -42,7 +42,6 @@ class Plotter:
 
   def select_data(self, jitter, param, default, percent):
     data = self.data
-
     # select data for given jitter and default
     data = data[data["Jitter"] == jitter]
     data = data[data[default] == self.DEFAULT[default]]
@@ -52,16 +51,17 @@ class Plotter:
 
     # merge deployed and undeployed
     deployed_data = data.loc[data["Deployed"], percent]
-    undeployed_data = data.loc[~data["Deployed"], percent]
-    data = pd.concat([deployed_data, undeployed_data], axis=1)
-    data.columns = ["deployed", "undeployed"]
-    return data
+    #undeployed_data = data.loc[~data["Deployed"], percent]
+    #data = pd.concat([deployed_data, undeployed_data], axis=1)
+    #data.columns = ["deployed", "undeployed"]
+    #return data
+    return deployed_data
 
   def plot(self, jitter, param, default, percent):
     data = self.select_data(jitter, param, default, percent)
     plot = data.plot()
     fig = plot.get_figure()
-    fig.savefig("figs/jitter={}_param={}.png".format(jitter, param))
+    fig.savefig("figs/new_jitter={}_param={}_percent={}.png".format(jitter, param, percent))
 
   def plot_all(self):
     self.plot(True, self.PARAMS[1], self.PARAMS[2], "90")
@@ -70,5 +70,6 @@ class Plotter:
     self.plot(False, self.PARAMS[2], self.PARAMS[1], "90")
 
 if __name__ == '__main__':
-  p = Plotter()
-  p.plot_all()
+  if len(sys.argv) == 1:
+    p = Plotter()
+    p.plot_all()
