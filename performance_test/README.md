@@ -1,6 +1,6 @@
 # Performance Tests
 
-We have conducted some performance tests for the WAF WASM filter using [`Fortio`](https://github.com/fortio/fortio). Specifically, we deployed the filter on the product page of Istio sample application Bookinfo, and measured the latency of safe requests at 50th, 75th, 90th, 99th, and 99.9th percentile. The baseline for comparison is the latency of Bookinfo application without the filter. To see the results, go to the [figs](figs) folder.
+We have conducted some performance tests for the WAF WASM filter using [`Fortio`](https://github.com/fortio/fortio). Specifically, we deployed the filter on the product page of Istio sample application Bookinfo, and measured the latency of safe requests at 50th, 75th, 90th, 99th, and 99.9th percentile. The baseline for comparison is the latency of Bookinfo application without the filter. To see the results, go to the [csv](csv) and [figs](figs) folder.
 
 In the performance tests, we set the default number of queries per second(QPS) to be 1000 and the default number of client connections to be 16. We made measurements for QPS = 10, 50, 100, 500, 1000, 2000 and number of connections = 2, 4, 8, 16, 32, 64 both with and without the jitter option in `Fortio`. Thus, there are 24 sets of parameters to measure. For each set, we made 15000 requests.
 
@@ -14,19 +14,29 @@ Step 1 and 2 can be done using the [`performance_test.sh`](./performance_test.sh
 ```
 ./performance_test.sh <status> <gateway_url> <label>
 ```
-where `<status>` is either `deployed` or `undeployed`, `<gateway_url>` is the ingress gateway URL for Bookinfo, and `<label>` is any label you want to give for the results. `<label>` is optional; if it is not provided, it will default to `WAF_wasm_<status>_<time_stamp>`.
+where `<status>` is either `deployed` or `undeployed`, `<gateway_url>` is the ingress gateway URL for Bookinfo, and `<label>` is any label you want to give for the results. `<label>` is optional; if it is not provided, it will default to `WAF_wasm_test_result`. The label for the deployed and the undeployed case should be the same.
 
-Since there are 24 sets of parameters in total and each set makes 15000 requests, the test will run for quite a while. After the tests complete, the results will be in the `json/<label>` folder.
+Since there are 24 sets of parameters to test and each set makes 15000 requests, the test will run for quite a while. After the tests complete, the results will be in the `json/<label>` folder.
 
 ### Results and Plots
 After measurements for both deployed and undeployed cases are made, we can use methods in [`plot.py`](plot.py) to analyze the results.
-By running `plot.py` as follows, a `csv` file with all the measurement results will be saved in [`csv`](csv) and four default plot figures will be saved in the [`figs`](figs) folder:
+By running `plot.py` as follows, a `csv` file with all the measurement results will be saved in the [`csv`](csv) folder and four default plot figures will be saved in the [`figs`](figs) folder:
 ```
 python3 plot.py <label>
 ```
-The `csv` file has the following columns:
+The `csv` file will have the following columns:
 ```
-
+ #   Column        Non-Null Count  Dtype  
+---  ------        --------------  -----  
+ 0   Jitter        44 non-null     bool   
+ 1   SocketCount   44 non-null     int64  
+ 2   RequestedQPS  44 non-null     int64  
+ 3   Deployed      44 non-null     bool   
+ 4   50            44 non-null     float64
+ 5   75            44 non-null     float64
+ 6   90            44 non-null     float64
+ 7   99            44 non-null     float64
+ 8   99.9          44 non-null     float64
 ```
 
 The default figures are:
