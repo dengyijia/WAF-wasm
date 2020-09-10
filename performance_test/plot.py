@@ -3,7 +3,6 @@ import glob
 import pandas as pd
 import sys
 import os
-from matplotlib import pyplot as plt
 from datetime import datetime
 
 class Plotter:
@@ -20,7 +19,7 @@ class Plotter:
     return result
 
   def read_data(self, directory):
-    filenames = glob.glob("data/{}/*.json".format(directory))
+    filenames = glob.glob("json/{}/*.json".format(directory))
     data = {param: [] for param in self.PARAMS + self.PERCENTS}
     for filename in filenames:
       result = self.read_json(filename)
