@@ -14,9 +14,9 @@ Step 1 and 2 can be done using the [`performance_test.sh`](./performance_test.sh
 ```
 ./performance_test.sh <status> <gateway_url> <label>
 ```
-where `<status>` is either `deployed` or `undeployed`, `<gateway_url>` is the ingress gateway URL for Bookinfo, and `<label>` is any label you want to give for the results. `<label>` is optional; if it is not provided, it will default to `WAF_wasm_<status>_<time_stamp>`.
+where `<status>` is either `deployed` or `undeployed`, `<gateway_url>` is the ingress gateway URL for Bookinfo, and `<label>` is any label you want to give for the results. `<label>` is optional; if it is not provided, it will default to `WAF_wasm_test_result`. The label for the deployed and the undeployed case should be the same.
 
-Since there are 24 sets of parameters in total and each set makes 15000 requests, the test will run for quite a while. After the tests complete, the results will be in the `json/<label>` folder.
+Since there are 24 sets of parameters to test and each set makes 15000 requests, the test will run for quite a while. After the tests complete, the results will be in the `json/<label>` folder.
 
 ### Results and Plots
 After measurements for both deployed and undeployed cases are made, we can use methods in [`plot.py`](plot.py) to analyze the results.
