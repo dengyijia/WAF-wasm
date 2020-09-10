@@ -20,13 +20,23 @@ Since there are 24 sets of parameters to test and each set makes 15000 requests,
 
 ### Results and Plots
 After measurements for both deployed and undeployed cases are made, we can use methods in [`plot.py`](plot.py) to analyze the results.
-By running `plot.py` as follows, a `csv` file with all the measurement results will be saved in [`csv`](csv) and four default plot figures will be saved in the [`figs`](figs) folder:
+By running `plot.py` as follows, a `csv` file with all the measurement results will be saved in the [`csv`](csv) folder and four default plot figures will be saved in the [`figs`](figs) folder:
 ```
 python3 plot.py <label>
 ```
-The `csv` file has the following columns:
+The `csv` file will have the following columns:
 ```
-
+ #   Column        Non-Null Count  Dtype  
+---  ------        --------------  -----  
+ 0   Jitter        44 non-null     bool   
+ 1   SocketCount   44 non-null     int64  
+ 2   RequestedQPS  44 non-null     int64  
+ 3   Deployed      44 non-null     bool   
+ 4   50            44 non-null     float64
+ 5   75            44 non-null     float64
+ 6   90            44 non-null     float64
+ 7   99            44 non-null     float64
+ 8   99.9          44 non-null     float64
 ```
 
 The default figures are:
