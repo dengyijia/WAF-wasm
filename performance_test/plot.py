@@ -15,7 +15,7 @@ class Plotter:
   def read_json(self, filename):
     with open(filename) as file:
       result = json.load(file)
-    result["Deployed"] = (filename.split("_")[3] == "deployed")
+    result["Deployed"] = not ("undeployed" in filename)
     return result
 
   def read_data(self, directory):
