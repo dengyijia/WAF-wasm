@@ -1,6 +1,6 @@
 # Performance Tests
 
-We have conducted some performance tests for the WAF WASM filter using [`Fortio`](https://github.com/fortio/fortio). Specifically, we deployed the filter on the product page of Istio sample application Bookinfo, and measured the latency of safe requests at 50th, 75th, 90th, 99th, and 99.9th percentile. The baseline for comparison is the latency of Bookinfo application without the filter. To see the results, go to the [figs](figs) folder.
+We have conducted some performance tests for the WAF WASM filter using [`Fortio`](https://github.com/fortio/fortio). Specifically, we deployed the filter on the product page of Istio sample application Bookinfo, and measured the latency of safe requests at 50th, 75th, 90th, 99th, and 99.9th percentile. The baseline for comparison is the latency of Bookinfo application without the filter. To see the results, go to the [csv](csv) and [figs](figs) folder.
 
 In the performance tests, we set the default number of queries per second(QPS) to be 1000 and the default number of client connections to be 16. We made measurements for QPS = 10, 50, 100, 500, 1000, 2000 and number of connections = 2, 4, 8, 16, 32, 64 both with and without the jitter option in `Fortio`. Thus, there are 24 sets of parameters to measure. For each set, we made 15000 requests.
 
