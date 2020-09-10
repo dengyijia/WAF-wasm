@@ -9,7 +9,7 @@ We first need to build the image of the SDK from its repository on the `envoy-re
 ```
 git clone git@github.com:proxy-wasm/proxy-wasm-cpp-sdk.git
 cd proxy-wasm-cpp-sdk
-git checkout envoy-release/v1.15 
+git checkout envoy-release/v1.15
 docker build -t wasmsdk:v2 -f Dockerfile-sdk .
 ```
 Then from the root of this repository, build the WASM module with:
@@ -51,37 +51,38 @@ Unit tests for individual utility functions in the WAF WASM extension are
 available in `test` directory. To run them, execute from the root of the
 repository:
 ```
-source ./build_test.sh
+sh ./build_test.sh
 ```
 
 
 ## Configuration
-The rules for SQL injection detection can be configured from YAML files. An example of configuration can be found in `envoy-config.yaml`. Configuration are passsed through the field `config.config.configuration.value` in the yaml file in JSON syntax as below:
-
+Users of the filter can decide which parts of http requests should go through SQL injection detection by passing in configuration strings. Specifically, the configuration should be passed in through the field `config.config.configuration.value` in JSON syntax in envoy configuration YAML files. An example can be found in `envoy-config.yaml`:
 ```
 {
-  “query_param”: {
+  “body”: {
     # detect sqli on all parameters but “foo”
     “Content-Type”: “application/x-www-form-urlencoded”,
-      “exclude”: [“foo”]
+    “exclude”: [“foo”]
   },
-    “header”: {
-      # detect sqli on “bar”, “Referrer”, and “User-Agent”
-      “include”: [“bar”]
-    }
+  “header”: {
+    # detect sqli on “bar”
+    “include”: [“bar”]
+  }
 }
 ```
 
-There are three parts that can be configured for now: query parameters(`query_param`), cookies(`cookie`, not shown above), and headers(`header`). Configuration for all three parts are optional. If nothing is passed in a field, a default configuration based on ModSecurity rule 942100 will apply. ModSecurity rule 942101 requires SQL injection detection on path of request. Configuration for path will be updated later.
+There are four parts that can be configured: query parameters in body(`body`),
+query parameters in path(`path`), cookies(`cookie`), and headers(`header`).
+Configuration for all four parts are optional. If an `include` is populated for
+a part, the WAF filter will only inspect the fields corresponding to the given
+keys. If an `exclude` is populated, the WAF filter will inspect all but the
+given keys. If nothing is passed for a part, a default configuration based on
+ModSecurity rule 942100 will apply. ModSecurity rule 942101 requires SQL
+injection detection on the entire path, all cookie names and values, all query
+parameters in body, and two header fields "User-Agent" and "Referer". `include
+and `exclude` are not expected to be present at the same time.
 
-### Query Parameters
-The "Content-Type" field is required in query parameters configuration, Currently, the WASM module only supports SQL injection detection for the content type "application/x-www-form-urlencoded" (it has the syntax `param=value&param2=value2`). If the incoming http request has a different content type, detection on its body will be skipped.
+If `body` is present in the configuration, the "Content-Type" field is required. Currently, the WASM filter only supports SQL injection detection for the content type "application/x-www-form-urlencoded" (it has the syntax `param=value&param2=value2`). If the incoming http request has a different content type, detection on its body will be skipped.
 
-In default setting, all query parameter namesand values will be checked for SQL injection. To change this setting, you can either add an `include` or an `exclude` field. Both take a list of parameter names. If `include` is present, only the parameters in the list will be checked. If `exclude` is present, all but the parameters in the list will be checked. `include` and `exclude` are not expected to be present at the same time.
-
-### Headers
-In default setting, the `Referrer` and `User-Agent` headers will be checked for SQL injection. The `include` and `exclude` fields work similarly as above, except that `Referrer` and `User-Agent` will always be checked unless explicitly enlisted in `exlude`.
-
-### Cookies
-In default setting, all cookie names will be checked. `include` and `exclude` work exactly the same as for query parameters.
-
+## Indentation
+Run `make indent` to format all C++ files.

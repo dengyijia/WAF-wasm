@@ -1,5 +1,5 @@
-#include "greatest.h"
 #include "../utility/common.h"
+#include "greatest.h"
 
 /*********************************************
  * Definitions for checking equality of Keys *
@@ -18,13 +18,11 @@ int KeysEq(const void* expected, const void* result, void* udata) {
   return true;
 }
 
-int KeysPrint(const void* arg, void* udata) {
-  return 0;
-}
+int KeysPrint(const void* arg, void* udata) { return 0; }
 
 static greatest_type_info Keys_info = {
-  KeysEq,
-  KeysPrint,
+    KeysEq,
+    KeysPrint,
 };
 
 TEST matchKeys(Keys arg1, Keys arg2) {
@@ -32,13 +30,12 @@ TEST matchKeys(Keys arg1, Keys arg2) {
   PASS();
 }
 
-
 /****************************************************
  * Definitions for checking equality of QueryParams *
  ****************************************************/
 
 // check equality of two query params objects
-static int ParamsEq(const void* expected, const void* resulted, void *udata) {
+static int ParamsEq(const void* expected, const void* resulted, void* udata) {
   const QueryParams* expected_params = static_cast<const QueryParams*>(expected);
   const QueryParams* resulted_params = static_cast<const QueryParams*>(resulted);
   if (expected_params->size() != resulted_params->size()) {
@@ -54,14 +51,12 @@ static int ParamsEq(const void* expected, const void* resulted, void *udata) {
 }
 
 // print a query params object
-static int ParamsPrint(const void* t, void* udata) {
-  return 0;
-}
+static int ParamsPrint(const void* t, void* udata) { return 0; }
 
 // pack the query params functions to pass in ASSERT_EQUAL_T
 static greatest_type_info ParamsInfo = {
-  ParamsEq,
-  ParamsPrint,
+    ParamsEq,
+    ParamsPrint,
 };
 
 // check if a key value pair exists in a query params object
@@ -76,5 +71,3 @@ TEST matchParams(QueryParams arg1, QueryParams arg2) {
   ASSERT_EQUAL_T(&arg1, &arg2, &ParamsInfo, NULL);
   PASS();
 }
-
-

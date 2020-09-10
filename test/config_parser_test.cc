@@ -1,5 +1,6 @@
-#include "test_common.h"
 #include "../utility/config_parser.h"
+
+#include "test_common.h"
 
 // Check that invalid json formatting will be handled
 TEST InvalidFormat(void) {
@@ -19,8 +20,8 @@ TEST EmptyConfig(void) {
 
   ASSERT_EQ(config.content_type, URLENCODED);
 
-  ASSERT_EQ(config.param_include, false);
-  ASSERT_EQ(config.params.size(), 0);
+  ASSERT_EQ(config.body_include, false);
+  ASSERT_EQ(config.body.size(), 0);
 
   ASSERT_EQ(config.header_include, true);
   Keys expected = Keys({"referer", "user-agent"});
@@ -33,7 +34,7 @@ TEST EmptyConfig(void) {
 }
 
 // Check that query param inputs are parsed correctly
-TEST QueryParamsConfig(void) {
+TEST BodyConfig(void) {
   std::string log;
   bool result;
 
@@ -41,18 +42,18 @@ TEST QueryParamsConfig(void) {
   Config config_none;
   std::string param_none = R"(
   {
-    "query_param": {}
+    "body": {}
   }
   )";
   result = parseConfig(param_none, &config_none, &log);
   ASSERT_EQ(result, false);
-  ASSERT_EQ(log, "missing content-type field under query_param");
+  ASSERT_EQ(log, "missing content-type field under body");
 
   // failure: content-type not supported
   Config config_unsupported;
   std::string param_unsupported = R"(
   {
-    "query_param": {
+    "body": {
        "content-type": "unsupported-type"
     }
   }
@@ -60,28 +61,29 @@ TEST QueryParamsConfig(void) {
   result = parseConfig(param_unsupported, &config_unsupported, &log);
   ASSERT_EQ(result, false);
   ASSERT_EQ(log,
-    "invalid content type, only application/x-www-form-urlencoded is supported");
+            "invalid content type, only application/x-www-form-urlencoded is "
+            "supported");
 
   // success: default config when no include/exclude is provided
   Config config_default;
   std::string param_default = R"(
   {
-    "query_param": {
+    "body": {
       "content-type": "application/x-www-form-urlencoded"
     }
   }
   )";
   result = parseConfig(param_default, &config_default, &log);
   ASSERT_EQ(result, true);
-  ASSERT_EQ(config_default.param_include, false);
+  ASSERT_EQ(config_default.body_include, false);
   Keys expected_default = Keys({});
-  ASSERT_EQUAL_T(&config_default.params, &expected_default, &Keys_info, NULL);
+  ASSERT_EQUAL_T(&config_default.body, &expected_default, &Keys_info, NULL);
 
   // success: include is provided
   Config config_include;
   std::string param_include = R"(
   {
-    "query_param": {
+    "body": {
       "content-type": "application/x-www-form-urlencoded",
       "include": ["foo", "bar"]
     }
@@ -89,15 +91,15 @@ TEST QueryParamsConfig(void) {
   )";
   result = parseConfig(param_include, &config_include, &log);
   ASSERT_EQ(result, true);
-  ASSERT_EQ(config_include.param_include, true);
+  ASSERT_EQ(config_include.body_include, true);
   Keys expected_include = Keys({"foo", "bar"});
-  ASSERT_EQUAL_T(&config_include.params, &expected_include, &Keys_info, NULL);
+  ASSERT_EQUAL_T(&config_include.body, &expected_include, &Keys_info, NULL);
 
   // success: exclude is provided
   Config config_exclude;
   std::string param_exclude = R"(
   {
-    "query_param": {
+    "body": {
       "content-type": "application/x-www-form-urlencoded",
       "exclude": ["foo", "bar"]
     }
@@ -105,15 +107,15 @@ TEST QueryParamsConfig(void) {
   )";
   result = parseConfig(param_exclude, &config_exclude, &log);
   ASSERT_EQ(result, true);
-  ASSERT_EQ(config_exclude.param_include, false);
+  ASSERT_EQ(config_exclude.body_include, false);
   Keys expected_exclude = Keys({"foo", "bar"});
-  ASSERT_EQUAL_T(&config_exclude.params, &expected_exclude, &Keys_info, NULL);
+  ASSERT_EQUAL_T(&config_exclude.body, &expected_exclude, &Keys_info, NULL);
 
   // failure: both include and exclude are provided
   Config config_both;
   std::string param_both = R"(
   {
-    "query_param": {
+    "body": {
       "content-type": "application/x-www-form-urlencoded",
       "exclude": ["foo", "bar"],
       "include": []
@@ -160,7 +162,7 @@ TEST HeaderConfig(void) {
   result = parseConfig(param_include, &config_include, &log);
   ASSERT_EQ(result, true);
   ASSERT_EQ(config_include.header_include, true);
-  Keys expected_include = Keys({"foo", "referer", "user-agent"});
+  Keys expected_include = Keys({"foo"});
   ASSERT_EQUAL_T(&config_include.headers, &expected_include, &Keys_info, NULL);
 
   // success: exclude is provided
@@ -174,7 +176,7 @@ TEST HeaderConfig(void) {
   )";
   result = parseConfig(param_exclude, &config_exclude, &log);
   ASSERT_EQ(result, true);
-  ASSERT_EQ(config_exclude.param_include, false);
+  ASSERT_EQ(config_exclude.body_include, false);
   Keys expected_exclude = Keys({"foo", "bar", "user-agent"});
   ASSERT_EQUAL_T(&config_exclude.headers, &expected_exclude, &Keys_info, NULL);
 
@@ -262,14 +264,14 @@ TEST CookieConfig(void) {
 SUITE(configTests) {
   RUN_TEST(InvalidFormat);
   RUN_TEST(EmptyConfig);
-  RUN_TEST(QueryParamsConfig);
+  RUN_TEST(BodyConfig);
   RUN_TEST(HeaderConfig);
   RUN_TEST(CookieConfig);
 }
 
 GREATEST_MAIN_DEFS();
 
-int main(int argc, char** argv){
+int main(int argc, char** argv) {
   GREATEST_MAIN_BEGIN();
   RUN_SUITE(configTests);
   GREATEST_MAIN_END();
