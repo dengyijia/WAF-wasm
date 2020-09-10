@@ -55,10 +55,13 @@ class Plotter:
     #data = pd.concat([deployed_data, undeployed_data], axis=1)
     #data.columns = ["deployed", "undeployed"]
     #return data
-    return deployed_data
+    data = pd.DataFrame(deployed_data)
+    data.columns = ["deployed"]
+    return data
 
   def plot(self, jitter, param, default, percent):
     data = self.select_data(jitter, param, default, percent)
+    print(data)
     plot = data.plot()
     fig = plot.get_figure()
     fig.savefig("figs/new_jitter={}_param={}_percent={}.png".format(jitter, param, percent))
