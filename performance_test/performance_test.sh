@@ -1,8 +1,18 @@
 #!/bin/bash
+
+# STATUS: either "deployed" or "undeployed"
 STATUS="$1"
+
+# GATEWAY_URL: ingress gateway url to bookinfo
 GATEWAY_URL="$2"
+
 LABEL_PREFIX="WAF_wasm_${STATUS}"
-DIR="data"
+
+DIR="json"
+TIME==$(date "+%Y.%m.%d-%H.%M.%S")
+NEW_DIR="${LABEL_PREFIX}_${TIME}"
+if [ "$#" -ne 2 ]; then
+  NEW_DIR="$3"
 
 DEFAULT_QPS=1000
 DEFAULT_CONN=16
@@ -12,6 +22,8 @@ CONN=(2 4 8 16 32 64)
 QPS=(10 50 100 500 1000 2000)
 
 cd ${DIR}
+mkdir ${NEW_DIR}
+cd ${NEW_DIR}
 for jitter in ${JITTERS[@]}; do
 
   # test for varying number of connections
@@ -28,4 +40,4 @@ for jitter in ${JITTERS[@]}; do
     fortio load -jitter=${jitter} -c ${DEFAULT_CONN} -qps ${qps} -n 15000 -a -r 0.001 -httpbufferkb=128 -labels "${LABEL}"  http://${GATEWAY_URL}/productpage
   done
 done
-cd ..
+cd ../..

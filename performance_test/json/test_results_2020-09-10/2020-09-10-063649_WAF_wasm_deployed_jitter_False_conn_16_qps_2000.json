@@ -1,0 +1,205 @@
+{
+  "RunType": "HTTP",
+  "Labels": "WAF_wasm_deployed_jitter=False_conn=16_qps=2000",
+  "StartTime": "2020-09-10T06:36:49.362379455Z",
+  "RequestedQPS": "2000",
+  "RequestedDuration": "exactly 15000 calls",
+  "ActualQPS": 97.83252388677656,
+  "ActualDuration": 153323244705,
+  "NumThreads": 16,
+  "Version": "1.6.9-pre",
+  "DurationHistogram": {
+    "Count": 15000,
+    "Min": 0.018879131,
+    "Max": 0.293723808,
+    "Sum": 2447.9865437410003,
+    "Avg": 0.16319910291606668,
+    "StdDev": 0.01867969811255842,
+    "Data": [
+      {
+        "Start": 0.018879131,
+        "End": 0.02,
+        "Percent": 0.006666666666666667,
+        "Count": 1
+      },
+      {
+        "Start": 0.02,
+        "End": 0.025,
+        "Percent": 0.03333333333333333,
+        "Count": 4
+      },
+      {
+        "Start": 0.025,
+        "End": 0.03,
+        "Percent": 0.04,
+        "Count": 1
+      },
+      {
+        "Start": 0.03,
+        "End": 0.035,
+        "Percent": 0.04666666666666667,
+        "Count": 1
+      },
+      {
+        "Start": 0.035,
+        "End": 0.04,
+        "Percent": 0.06,
+        "Count": 2
+      },
+      {
+        "Start": 0.04,
+        "End": 0.045,
+        "Percent": 0.07333333333333333,
+        "Count": 2
+      },
+      {
+        "Start": 0.045,
+        "End": 0.05,
+        "Percent": 0.08666666666666667,
+        "Count": 2
+      },
+      {
+        "Start": 0.05,
+        "End": 0.06,
+        "Percent": 0.12,
+        "Count": 5
+      },
+      {
+        "Start": 0.06,
+        "End": 0.07,
+        "Percent": 0.16,
+        "Count": 6
+      },
+      {
+        "Start": 0.07,
+        "End": 0.08,
+        "Percent": 0.17333333333333334,
+        "Count": 2
+      },
+      {
+        "Start": 0.08,
+        "End": 0.09,
+        "Percent": 0.18666666666666668,
+        "Count": 2
+      },
+      {
+        "Start": 0.09,
+        "End": 0.1,
+        "Percent": 0.20666666666666667,
+        "Count": 3
+      },
+      {
+        "Start": 0.1,
+        "End": 0.12,
+        "Percent": 0.30666666666666664,
+        "Count": 15
+      },
+      {
+        "Start": 0.12,
+        "End": 0.14,
+        "Percent": 6.76,
+        "Count": 968
+      },
+      {
+        "Start": 0.14,
+        "End": 0.16,
+        "Percent": 47.6,
+        "Count": 6126
+      },
+      {
+        "Start": 0.16,
+        "End": 0.18,
+        "Percent": 83.18666666666667,
+        "Count": 5338
+      },
+      {
+        "Start": 0.18,
+        "End": 0.2,
+        "Percent": 96.8,
+        "Count": 2042
+      },
+      {
+        "Start": 0.2,
+        "End": 0.25,
+        "Percent": 99.90666666666667,
+        "Count": 466
+      },
+      {
+        "Start": 0.25,
+        "End": 0.293723808,
+        "Percent": 100,
+        "Count": 14
+      }
+    ],
+    "Percentiles": [
+      {
+        "Percentile": 50,
+        "Value": 0.16134881978269014
+      },
+      {
+        "Percentile": 75,
+        "Value": 0.17539902585237915
+      },
+      {
+        "Percentile": 90,
+        "Value": 0.19000979431929482
+      },
+      {
+        "Percentile": 99,
+        "Value": 0.23540772532188842
+      },
+      {
+        "Percentile": 99.9,
+        "Value": 0.24989270386266105
+      }
+    ]
+  },
+  "Exactly": 15000,
+  "Jitter": false,
+  "RetCodes": {
+    "200": 15000
+  },
+  "Sizes": {
+    "Count": 15000,
+    "Min": 4375,
+    "Max": 5376,
+    "Sum": 75619969,
+    "Avg": 5041.331266666667,
+    "StdDev": 470.46436003420513,
+    "Data": [
+      {
+        "Start": 4375,
+        "End": 4500,
+        "Percent": 33.333333333333336,
+        "Count": 5000
+      },
+      {
+        "Start": 5000,
+        "End": 5376,
+        "Percent": 100,
+        "Count": 10000
+      }
+    ],
+    "Percentiles": null
+  },
+  "HeaderSizes": {
+    "Count": 15000,
+    "Min": 192,
+    "Max": 193,
+    "Sum": 2894969,
+    "Avg": 192.99793333333332,
+    "StdDev": 0.04541360541476289,
+    "Data": [
+      {
+        "Start": 192,
+        "End": 193,
+        "Percent": 100,
+        "Count": 15000
+      }
+    ],
+    "Percentiles": null
+  },
+  "URL": "http://172.18.0.2:30388/productpage",
+  "SocketCount": 16,
+  "AbortOn": 0
+}

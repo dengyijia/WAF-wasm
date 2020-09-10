@@ -1,0 +1,199 @@
+{
+  "RunType": "HTTP",
+  "Labels": "WAF_wasm_undeployed_jitter=True_conn=16_qps=1000",
+  "StartTime": "2020-09-10T15:42:41.07546936Z",
+  "RequestedQPS": "1000",
+  "RequestedDuration": "exactly 15000 calls",
+  "ActualQPS": 98.64671818159944,
+  "ActualDuration": 152057770157,
+  "NumThreads": 16,
+  "Version": "1.6.9-pre",
+  "DurationHistogram": {
+    "Count": 15000,
+    "Min": 0.019395606,
+    "Max": 0.290760175,
+    "Sum": 2427.7369907990005,
+    "Avg": 0.16184913271993337,
+    "StdDev": 0.020060448146948642,
+    "Data": [
+      {
+        "Start": 0.019395606,
+        "End": 0.02,
+        "Percent": 0.013333333333333334,
+        "Count": 2
+      },
+      {
+        "Start": 0.02,
+        "End": 0.025,
+        "Percent": 0.02,
+        "Count": 1
+      },
+      {
+        "Start": 0.025,
+        "End": 0.03,
+        "Percent": 0.04,
+        "Count": 3
+      },
+      {
+        "Start": 0.03,
+        "End": 0.035,
+        "Percent": 0.06,
+        "Count": 3
+      },
+      {
+        "Start": 0.035,
+        "End": 0.04,
+        "Percent": 0.07333333333333333,
+        "Count": 2
+      },
+      {
+        "Start": 0.045,
+        "End": 0.05,
+        "Percent": 0.09333333333333334,
+        "Count": 3
+      },
+      {
+        "Start": 0.05,
+        "End": 0.06,
+        "Percent": 0.12,
+        "Count": 4
+      },
+      {
+        "Start": 0.06,
+        "End": 0.07,
+        "Percent": 0.14666666666666667,
+        "Count": 4
+      },
+      {
+        "Start": 0.07,
+        "End": 0.08,
+        "Percent": 0.18666666666666668,
+        "Count": 6
+      },
+      {
+        "Start": 0.08,
+        "End": 0.09,
+        "Percent": 0.2,
+        "Count": 2
+      },
+      {
+        "Start": 0.09,
+        "End": 0.1,
+        "Percent": 0.22,
+        "Count": 3
+      },
+      {
+        "Start": 0.1,
+        "End": 0.12,
+        "Percent": 0.4266666666666667,
+        "Count": 31
+      },
+      {
+        "Start": 0.12,
+        "End": 0.14,
+        "Percent": 9.333333333333334,
+        "Count": 1336
+      },
+      {
+        "Start": 0.14,
+        "End": 0.16,
+        "Percent": 51.78,
+        "Count": 6367
+      },
+      {
+        "Start": 0.16,
+        "End": 0.18,
+        "Percent": 84.36666666666666,
+        "Count": 4888
+      },
+      {
+        "Start": 0.18,
+        "End": 0.2,
+        "Percent": 95.87333333333333,
+        "Count": 1726
+      },
+      {
+        "Start": 0.2,
+        "End": 0.25,
+        "Percent": 99.83333333333333,
+        "Count": 594
+      },
+      {
+        "Start": 0.25,
+        "End": 0.290760175,
+        "Percent": 100,
+        "Count": 25
+      }
+    ],
+    "Percentiles": [
+      {
+        "Percentile": 50,
+        "Value": 0.15916130045547355
+      },
+      {
+        "Percentile": 75,
+        "Value": 0.17425122749590835
+      },
+      {
+        "Percentile": 90,
+        "Value": 0.18979142526071843
+      },
+      {
+        "Percentile": 99,
+        "Value": 0.2394781144781145
+      },
+      {
+        "Percentile": 99.9,
+        "Value": 0.2663040700000021
+      }
+    ]
+  },
+  "Exactly": 15000,
+  "Jitter": true,
+  "RetCodes": {
+    "200": 15000
+  },
+  "Sizes": {
+    "Count": 15000,
+    "Min": 4357,
+    "Max": 5358,
+    "Sum": 75349966,
+    "Avg": 5023.331066666667,
+    "StdDev": 470.4646430868752,
+    "Data": [
+      {
+        "Start": 4357,
+        "End": 4500,
+        "Percent": 33.333333333333336,
+        "Count": 5000
+      },
+      {
+        "Start": 5000,
+        "End": 5358,
+        "Percent": 100,
+        "Count": 10000
+      }
+    ],
+    "Percentiles": null
+  },
+  "HeaderSizes": {
+    "Count": 15000,
+    "Min": 174,
+    "Max": 175,
+    "Sum": 2624966,
+    "Avg": 174.99773333333334,
+    "StdDev": 0.04755553479184285,
+    "Data": [
+      {
+        "Start": 174,
+        "End": 175,
+        "Percent": 100,
+        "Count": 15000
+      }
+    ],
+    "Percentiles": null
+  },
+  "URL": "http://172.18.0.2:30388/productpage",
+  "SocketCount": 16,
+  "AbortOn": 0
+}

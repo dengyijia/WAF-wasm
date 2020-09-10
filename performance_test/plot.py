@@ -2,15 +2,16 @@ import json
 import glob
 import pandas as pd
 import sys
+import os
 from matplotlib import pyplot as plt
 from datetime import datetime
 
 class Plotter:
-  def __init__(self):
+  def __init__(self, directory):
     self.PARAMS = ["Jitter", "SocketCount", "RequestedQPS", "Deployed"]
     self.DEFAULT = {"SocketCount": 16, "RequestedQPS": 1000}
     self.PERCENTS = ["50", "75", "90", "99", "99.9"]
-    self.data = self.read_data()
+    self.data = self.read_data(directory)
 
   def read_json(self, filename):
     with open(filename) as file:
@@ -18,8 +19,8 @@ class Plotter:
     result["Deployed"] = (filename.split("_")[3] == "deployed")
     return result
 
-  def read_data(self):
-    filenames = glob.glob("data/*.json")
+  def read_data(self, directory):
+    filenames = glob.glob("data/{}/*.json".format(directory))
     data = {param: [] for param in self.PARAMS + self.PERCENTS}
     for filename in filenames:
       result = self.read_json(filename)
@@ -34,17 +35,21 @@ class Plotter:
         data[str(percentile["Percentile"])].append(percentile["Value"])
 
     data = pd.DataFrame(data)
+
     # clean data with types
     data[self.PERCENTS] = data[self.PERCENTS].astype(float)
     data["RequestedQPS"] = data["RequestedQPS"].astype(int)
 
     # clean duplicates
     data = data.groupby(self.PARAMS).mean().reset_index()
+
+    # save data as csv
+    data.to_csv("csv/{}.csv".format(directory))
     return data
 
   def select_data(self, jitter, param, default, percent):
-    data = self.data
     # select data for given jitter and default
+    data = self.data
     data = data[data["Jitter"] == jitter]
     data = data[data[default] == self.DEFAULT[default]]
 
@@ -53,12 +58,9 @@ class Plotter:
 
     # merge deployed and undeployed
     deployed_data = data.loc[data["Deployed"], percent]
-    #undeployed_data = data.loc[~data["Deployed"], percent]
-    #data = pd.concat([deployed_data, undeployed_data], axis=1)
-    #data.columns = ["deployed", "undeployed"]
-    #return data
-    data = pd.DataFrame(deployed_data)
-    data.columns = ["deployed"]
+    undeployed_data = data.loc[~data["Deployed"], percent]
+    data = pd.concat([deployed_data, undeployed_data], axis=1)
+    data.columns = ["filter deployed", "filter undeployed"]
     return data
 
   def plot(self, jitter, param, default, percent):
@@ -82,9 +84,18 @@ class Plotter:
     self.plot(False, self.PARAMS[2], self.PARAMS[1], "90")
 
 if __name__ == '__main__':
-  p = Plotter()
-  if len(sys.argv) == 1:
+  if len(sys.argv) > 1:
+    directory = sys.argv[1]
+  else:
+    subdirs = ["json/" + d for d in os.listdir("json")]
+    latest = max(subdirs , key=os.path.getmtime)
+    directory = latest[5:]
+  print("loading directory: " + directory)
+
+  p = Plotter(directory)
+
+  if len(sys.argv) != 6:
     p.plot_all()
   else:
-    jitter, param, default, percent = sys.argv
+    _, jitter, param, default, percent = sys.argv
     p.plot(jitter, param, default, percent)
