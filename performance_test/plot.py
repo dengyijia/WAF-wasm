@@ -3,6 +3,7 @@ import glob
 import pandas as pd
 import sys
 from matplotlib import pyplot as plt
+from datetime import datetime
 
 class Plotter:
   def __init__(self):
@@ -61,14 +62,18 @@ class Plotter:
     return data
 
   def plot(self, jitter, param, default, percent):
+    # get data
     data = self.select_data(jitter, param, default, percent)
-    plot = data.plot()
-    plt.title("Latency vs {} with {} = {} and Jitter = {}".format(param, default, self.DEFAULT[default], jitter))
-    plt.ylabel(percent + "th latency (ms)")
-    print("Latency vs {} with {} = {} and Jitter = {}".format(param, default, self.DEFAULT[default], jitter))
-    print(data)
+
+    # make plot
+    title = "Latency vs {} with {} = {} and Jitter = {}".format(param, default, self.DEFAULT[default], jitter)
+    plot = data.plot(title=title)
+    plot.set_ylabel(percent + "th latency (ms)")
+
+    # save figure
     fig = plot.get_figure()
-    fig.savefig("figs/new_jitter={}_param={}_percent={}.png".format(jitter, param, percent))
+    time = datetime.now().strftime("%m-%d-%Y_%H:%M:%S")
+    fig.savefig("figs/jitter={}_param={}_percent={}_time={}.png".format(jitter, param, percent, time))
 
   def plot_all(self):
     self.plot(True, self.PARAMS[1], self.PARAMS[2], "90")
@@ -77,6 +82,9 @@ class Plotter:
     self.plot(False, self.PARAMS[2], self.PARAMS[1], "90")
 
 if __name__ == '__main__':
+  p = Plotter()
   if len(sys.argv) == 1:
-    p = Plotter()
     p.plot_all()
+  else:
+    jitter, param, default, percent = sys.argv
+    p.plot(jitter, param, default, percent)
