@@ -6,11 +6,12 @@ import os
 from datetime import datetime
 
 class Plotter:
-  def __init__(self, directory):
+  def __init__(self, label):
     self.PARAMS = ["Jitter", "SocketCount", "RequestedQPS", "Deployed"]
     self.DEFAULT = {"SocketCount": 16, "RequestedQPS": 1000}
     self.PERCENTS = ["50", "75", "90", "99", "99.9"]
-    self.data = self.read_data(directory)
+    self.label = label
+    self.data = self.read_data()
 
   def read_json(self, filename):
     with open(filename) as file:
@@ -18,8 +19,8 @@ class Plotter:
     result["Deployed"] = not ("undeployed" in filename)
     return result
 
-  def read_data(self, directory):
-    filenames = glob.glob("json/{}/*.json".format(directory))
+  def read_data(self):
+    filenames = glob.glob("json/{}/*.json".format(self.label))
     data = {param: [] for param in self.PARAMS + self.PERCENTS}
     for filename in filenames:
       result = self.read_json(filename)
@@ -43,7 +44,7 @@ class Plotter:
     data = data.groupby(self.PARAMS).mean().reset_index()
 
     # save data as csv
-    data.to_csv("csv/{}.csv".format(directory))
+    data.to_csv("csv/{}.csv".format(label))
     return data
 
   def select_data(self, jitter, param, default, percent):
@@ -73,8 +74,7 @@ class Plotter:
 
     # save figure
     fig = plot.get_figure()
-    time = datetime.now().strftime("%m-%d-%Y_%H:%M:%S")
-    fig.savefig("figs/jitter={}_param={}_percent={}_time={}.png".format(jitter, param, percent, time))
+    fig.savefig("figs/{}_jitter={}_param={}_percent={}.png".format(self.label, jitter, param, percent))
 
   def plot_all(self):
     self.plot(True, self.PARAMS[1], self.PARAMS[2], "90")
@@ -84,14 +84,14 @@ class Plotter:
 
 if __name__ == '__main__':
   if len(sys.argv) > 1:
-    directory = sys.argv[1]
+    label = sys.argv[1]
   else:
     subdirs = ["json/" + d for d in os.listdir("json")]
     latest = max(subdirs , key=os.path.getmtime)
-    directory = latest[5:]
-  print("loading directory: " + directory)
+    label = latest[5:]
+  print("loading label: " + label)
 
-  p = Plotter(directory)
+  p = Plotter(label)
 
   if len(sys.argv) != 6:
     p.plot_all()
