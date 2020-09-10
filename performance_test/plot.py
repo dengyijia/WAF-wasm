@@ -2,6 +2,7 @@ import json
 import glob
 import pandas as pd
 import sys
+from matplotlib import pyplot as plt
 
 class Plotter:
   def __init__(self):
@@ -61,8 +62,11 @@ class Plotter:
 
   def plot(self, jitter, param, default, percent):
     data = self.select_data(jitter, param, default, percent)
-    print(data)
     plot = data.plot()
+    plt.title("Latency vs {} with {} = {} and Jitter = {}".format(param, default, self.DEFAULT[default], jitter))
+    plt.ylabel(percent + "th latency (ms)")
+    print("Latency vs {} with {} = {} and Jitter = {}".format(param, default, self.DEFAULT[default], jitter))
+    print(data)
     fig = plot.get_figure()
     fig.savefig("figs/new_jitter={}_param={}_percent={}.png".format(jitter, param, percent))
 
