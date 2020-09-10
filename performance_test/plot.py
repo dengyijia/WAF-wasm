@@ -97,4 +97,4 @@ if __name__ == '__main__':
     p.plot_all()
   else:
     _, jitter, param, default, percent = sys.argv
-    p.plot(jitter, param, default, percent)
+    p.plot(bool(jitter), param, default, percent)
