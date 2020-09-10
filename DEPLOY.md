@@ -1,6 +1,6 @@
 # Deployment on Istio
 
-We will walk through how to deploy this WAF WASM filter on Istio through the
+We will walk through how to deploy the WAF WASM filter on Istio through the
 sample application Bookinfo. Specifically, we will deploy the filter on the
 `productpage` service of the Bookinfo application.
 
@@ -8,16 +8,19 @@ There are two pre-requisites:
 1. Follow the instructions in README.md to build the
    WASM filter with `proxy-wasm-cpp-sdk`. You should have a
    `WAF_wasm.wasm` file at the root of this repository.
-2. Install Istio 1.7.0 and can run the sample Bookinfo
+2. Install Istio 1.7.0 and make sure you can run the sample Bookinfo
    application following the instructions
    [here](https://istio.io/latest/docs/setup/getting-started/) on istio.io.
    Before starting on the deployment of this WASM filter, clean up the Bookinfo
-   application with the command ```samples/bookinfo/platform/kube/cleanup.sh
-```
+   application with the command ```samples/bookinfo/platform/kube/cleanup.sh```
 
-Currently, we have two steps in the deployment: mount the `.wasm` file onto
-the volume of Istio proxy and patch the configuration of the Istio proxy to use
-the filter. In the future release of Istio 1.7.1, there will be tools to complete the
+Currently, we have two steps in the deployment: 
+1. Mount the `.wasm` file onto
+the volume of Istio proxy 
+2. Patch the configuration of the Istio proxy to use
+the filter
+
+In the future release of Istio 1.7.1, there will be tools to complete the
 deployment in one step.
 
 ### Mount the WASM file to Istio proxy
@@ -26,7 +29,7 @@ modify the path as it is on your local machine).
 ```
 kubectl create cm waf-wasm-filter --from-file=<path-to-WAF-wasm-repo>/WAF_wasm.wasm
 ```
-Using the configuration map, add user volume annotations to the `productpage` deployment of
+Add user volume annotations to the `productpage` deployment of
 `samples/bookinfo/platform/kube/bookinfo.yaml` (`productpage` is the last service
 configured in the file). The `spec/template/metadata` section of your
 `bookinfo.yaml` should look like this:
@@ -40,7 +43,7 @@ metadata:
     sidecar.istio.io/userVolumeMount: '[{"mountPath":"/var/local/lib/wasm-filters","name":"wasmfilters-dir"}]'
 ```
 
-### Patch the Istio proxy config for filter
+### Patch the Istio proxy config for the additional filter
 Create a `filter.yaml` file with the following content:
 ```
 apiVersion: networking.istio.io/v1alpha3
@@ -93,7 +96,10 @@ kubectl apply -f filter.yaml
 ```
 
 ### Run the Bookinfo application
-Now you can run the Bookinfo application with the instructions on istio.io.
+Now you can run the Bookinfo application with:
+```
+kubectl apply -f samples/bookinfo/platform/kube/bookinfo.yaml
+```
 There are several things you can do to verify that the filter has been deployed.
 
 First, check that the `WAF_wasm.wasm` file was mounted correctly in the Istio
