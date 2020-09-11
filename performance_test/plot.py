@@ -70,7 +70,7 @@ class Plotter:
     # make plot
     title = "Latency vs {} with {} = {} and Jitter = {}".format(param, default, self.DEFAULT[default], jitter)
     plot = data.plot(title=title)
-    plot.set_ylabel(percent + "th latency (ms)")
+    plot.set_ylabel(percent + "th latency (s)")
 
     # save figure
     fig = plot.get_figure()
