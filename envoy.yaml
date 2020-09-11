@@ -35,6 +35,14 @@ static_resources:
                     local:
                       filename: "/etc/WAF_wasm.wasm"
                   allow_precompiled: true
+                configuration:
+                  "@type": "type.googleapis.com/google.protobuf.StringValue"
+                  value: |
+                    {
+                      "query_param": {
+                        "content-type": "application/x-www-form-urlencoded"
+                      }
+                    }
           - name: envoy.router
             config: {}
   - name: staticreply

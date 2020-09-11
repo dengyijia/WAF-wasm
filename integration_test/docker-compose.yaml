@@ -1,0 +1,52 @@
+version: "3.8"
+services:
+  proxy-default:
+    build:
+      context: .
+      dockerfile: Dockerfile-WAF
+    command: -l error --concurrency 1 -c /etc/envoy.yaml
+    entrypoint: /usr/local/bin/envoy
+    volumes:
+      - ./envoy-default.yaml:/etc/envoy.yaml
+      - ../WAF_wasm.wasm:/etc/WAF_wasm.wasm
+    ports:
+      - "8081:8081"
+    networks:
+      - WAF-integration-test
+  proxy-include:
+    build:
+      context: .
+      dockerfile: Dockerfile-WAF
+    command: -l error --concurrency 1 -c /etc/envoy.yaml
+    entrypoint: /usr/local/bin/envoy
+    volumes:
+      - ./envoy-include.yaml:/etc/envoy.yaml
+      - ../WAF_wasm.wasm:/etc/WAF_wasm.wasm
+    ports:
+      - "8082:8082"
+    networks:
+      - WAF-integration-test
+  proxy-exclude:
+    build:
+      context: .
+      dockerfile: Dockerfile-WAF
+    command: -l error --concurrency 1 -c /etc/envoy.yaml
+    entrypoint: /usr/local/bin/envoy
+    volumes:
+      - ./envoy-exclude.yaml:/etc/envoy.yaml
+      - ../WAF_wasm.wasm:/etc/WAF_wasm.wasm
+    ports:
+      - "8083:8083"
+    networks:
+      - WAF-integration-test
+  client-server:
+    build:
+      context: .
+      dockerfile: Dockerfile-client-server
+    ports:
+      - "8080:8080"
+    networks:
+      - WAF-integration-test
+networks:
+  WAF-integration-test: {}
+
