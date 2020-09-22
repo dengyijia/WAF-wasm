@@ -19,5 +19,6 @@ UTILITY_HEADER = utility/*.h utility/libinjection/*.h utility/nlohmann/json.hpp
 clean:
 	rm *.wasm
 
-
+indent:
+	find . -regex '.*\.\(cpp\|hpp\|cc\|cxx\|h\)' | xargs clang-format -style=file -i
 

@@ -1,8 +1,8 @@
 // NOLINT(namespace-envoy)
 #include <string>
-#include <vector>
 #include <unordered_map>
 #include <unordered_set>
+#include <vector>
 
 #include "proxy_wasm_intrinsics.h"
 #include "utility/config_parser.h"
@@ -10,7 +10,7 @@
 #include "utility/sqli.h"
 
 void onSQLi(std::string part) {
-  LOG_ERROR("SQL injection detected");
+  LOG_TRACE("SQL injection detected");
   std::string response_body = "SQL injection detected";
   std::string response_log = "SQLi at " + part;
   sendLocalResponse(403, response_log, response_body, {});
@@ -25,19 +25,19 @@ std::string printParams(QueryParams params) {
 }
 
 class ExampleRootContext : public RootContext {
-public:
+ public:
   explicit ExampleRootContext(uint32_t id, StringView root_id) : RootContext(id, root_id) {}
 
   bool onConfigure(size_t config_size) override;
   bool onStart(size_t) override;
   Config getConfig() { return config_; }
 
-private:
+ private:
   struct Config config_;
 };
 
 class ExampleContext : public Context {
-public:
+ public:
   explicit ExampleContext(uint32_t id, RootContext* root) : Context(id, root) {}
 
   void onCreate() override;
@@ -48,13 +48,12 @@ public:
   void onLog() override;
   void onDelete() override;
 
-private:
+ private:
   std::string content_type_;
   struct Config config_;
 };
 static RegisterContextFactory register_ExampleContext(CONTEXT_FACTORY(ExampleContext),
-                                                      ROOT_FACTORY(ExampleRootContext),
-                                                      "root_WAF");
+                                                      ROOT_FACTORY(ExampleRootContext), "root_WAF");
 
 bool ExampleRootContext::onStart(size_t) {
   LOG_TRACE("onStart");
@@ -127,7 +126,7 @@ FilterHeadersStatus ExampleContext::onRequestHeaders(uint32_t, bool) {
   std::string path = getRequestHeader(":path")->toString();
   QueryParams path_params = parsePath(path);
   LOG_TRACE("Path parsed: " + printParams(path_params));
-  if (detectSQLiOnParams(cookies, false, {}, &log)) {
+  if (detectSQLiOnParams(cookies, config_.path_include, config_.path, &log)) {
     onSQLi("path");
     return FilterHeadersStatus::StopIteration;
   }
@@ -142,7 +141,7 @@ FilterHeadersStatus ExampleContext::onRequestHeaders(uint32_t, bool) {
 FilterDataStatus ExampleContext::onRequestBody(size_t body_buffer_length, bool end_of_stream) {
   auto body = getBufferBytes(WasmBufferType::HttpRequestBody, 0, body_buffer_length);
   auto body_str = std::string(body->view());
-  LOG_ERROR(std::string("onRequestBody ") + body_str);
+  LOG_TRACE(std::string("onRequestBody ") + body_str);
 
   if (content_type_.compare("application/x-www-form-urlencoded") != 0) {
     return FilterDataStatus::Continue;
@@ -150,10 +149,10 @@ FilterDataStatus ExampleContext::onRequestBody(size_t body_buffer_length, bool e
 
   // detect SQL injection in query parameters
   std::string log;
-  auto query_params = parseBody(body_str);
-  LOG_TRACE("query params parsed: " + printParams(query_params));
-  if (detectSQLiOnParams(query_params, config_.param_include, config_.params, &log)) {
-    onSQLi("body query params");
+  auto body_params = parseBody(body_str);
+  LOG_TRACE("body parsed: " + printParams(body_params));
+  if (detectSQLiOnParams(body_params, config_.body_include, config_.body, &log)) {
+    onSQLi("body");
     return FilterDataStatus::StopIterationAndBuffer;
   }
   LOG_TRACE("body sqli detection finished:\n" + log);
@@ -168,11 +167,8 @@ FilterHeadersStatus ExampleContext::onResponseHeaders(uint32_t, bool) {
   for (auto& p : pairs) {
     LOG_INFO(std::string(p.first) + std::string(" -> ") + std::string(p.second));
   }
-  addResponseHeader("branch", "libinjection-config");
-  replaceResponseHeader("location", "envoy-wasm");
   return FilterHeadersStatus::Continue;
 }
-
 
 void ExampleContext::onDone() { LOG_WARN(std::string("onDone " + std::to_string(id()))); }
 

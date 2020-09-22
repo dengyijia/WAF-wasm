@@ -1,0 +1,11 @@
+FROM golang
+
+ENV APP integration_test
+
+COPY . /go/src/${APP}/
+WORKDIR /go/src/${APP}
+
+RUN go get ./
+RUN go build -o ${APP}
+
+CMD ./${APP}

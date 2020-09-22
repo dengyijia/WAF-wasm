@@ -1,6 +1,6 @@
-#include "test_common.h"
 #include "../utility/http_parser.h"
 
+#include "test_common.h"
 
 /*********
  * TESTS *
@@ -19,7 +19,8 @@ TEST PercentDecodingTest(void) {
 }
   )EOF";
   ASSERT_EQ(percentDecode("%0A{%0A    \"error\": {%0A        \"code\": 401,%0A   "
-                          "     \"message\": \"Unauthorized\"%0A    }%0A}%0A  "), json_string);
+                          "     \"message\": \"Unauthorized\"%0A    }%0A}%0A  "),
+            json_string);
 
   ASSERT_EQ(percentDecode("too%20lar%20"), "too lar ");
   ASSERT_EQ(percentDecode("too%20larg%e"), "too larg%e");
@@ -30,12 +31,10 @@ TEST PercentDecodingTest(void) {
 }
 
 TEST ParseCookieTest(void) {
-  CHECK_CALL(matchParams(parseCookie("abc=def; token=abc123; Expires=Wed, 09 Jun 2021 10:18:14 GMT"),
-                         QueryParams({
-                           {"abc", "def"},
-                           {"token", "abc123"},
-                           {"Expires", "Wed, 09 Jun 2021 10:18:14 GMT"}
-                         })));
+  CHECK_CALL(matchParams(
+      parseCookie("abc=def; token=abc123; Expires=Wed, 09 Jun 2021 10:18:14 GMT"),
+      QueryParams(
+          {{"abc", "def"}, {"token", "abc123"}, {"Expires", "Wed, 09 Jun 2021 10:18:14 GMT"}})));
 
   // cookies with bad formatting
   CHECK_CALL(matchValue(parseCookie("token1=abc123; = "), "token1", "abc123"));
@@ -45,13 +44,8 @@ TEST ParseCookieTest(void) {
 
   // cookies with quotes
   CHECK_CALL(matchParams(
-      QueryParams({
-        {"dquote", "\""},
-        {"quoteddquote", "\""},
-        {"leadingdquote", "\"foobar"}
-      }),
-      parseCookie("dquote=\"; quoteddquote=\"\"\"; leadingdquote=\"foobar;")
-  ));
+      QueryParams({{"dquote", "\""}, {"quoteddquote", "\""}, {"leadingdquote", "\"foobar"}}),
+      parseCookie("dquote=\"; quoteddquote=\"\"\"; leadingdquote=\"foobar;")));
   PASS();
 }
 
@@ -60,8 +54,7 @@ TEST ParseBodyTest(void) {
   CHECK_CALL(matchParams(parseBody("hello"), QueryParams({{"hello", ""}})));
   CHECK_CALL(matchParams(parseBody("hello="), QueryParams({{"hello", ""}})));
   CHECK_CALL(matchParams(parseBody("hello=&"), QueryParams({{"hello", ""}})));
-  CHECK_CALL(matchParams(parseBody("hello=world"),
-                         QueryParams({{"hello", "world"}})));
+  CHECK_CALL(matchParams(parseBody("hello=world"), QueryParams({{"hello", "world"}})));
   CHECK_CALL(matchParams(parseBody("hello=&hello2=world2"),
                          QueryParams({{"hello", ""}, {"hello2", "world2"}})));
   CHECK_CALL(matchParams(parseBody("name=admin&level=trace"),
@@ -73,10 +66,9 @@ TEST ParsePathTest(void) {
   CHECK_CALL(matchParams(parsePath("/hello"), QueryParams()));
   CHECK_CALL(matchParams(parsePath("/hello?"), QueryParams()));
   CHECK_CALL(matchParams(parsePath("/hello?hello"), QueryParams({{"hello", ""}})));
-  CHECK_CALL(matchParams(parsePath("/hello?hello="),QueryParams({{"hello", ""}})));
-  CHECK_CALL(matchParams(parsePath("/hello?hello=&"),QueryParams({{"hello", ""}})));
-  CHECK_CALL(matchParams(parsePath("/hello?hello=world"),
-                         QueryParams({{"hello", "world"}})));
+  CHECK_CALL(matchParams(parsePath("/hello?hello="), QueryParams({{"hello", ""}})));
+  CHECK_CALL(matchParams(parsePath("/hello?hello=&"), QueryParams({{"hello", ""}})));
+  CHECK_CALL(matchParams(parsePath("/hello?hello=world"), QueryParams({{"hello", "world"}})));
   CHECK_CALL(matchParams(parsePath("/hello?hello=&hello2=world2"),
                          QueryParams({{"hello", ""}, {"hello2", "world2"}})));
   CHECK_CALL(matchParams(parsePath("/logging?name=admin&level=trace"),

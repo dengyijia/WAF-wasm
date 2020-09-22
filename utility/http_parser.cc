@@ -1,4 +1,5 @@
 #include "http_parser.h"
+
 #include <ctype.h>
 
 std::string percentDecode(std::string encoded) {
@@ -84,11 +85,6 @@ QueryParams parsePath(std::string path) {
   return parseParameters(path, start);
 }
 
-QueryParams parseBody(std::string body) {
-  return parseParameters(body, 0);
-}
+QueryParams parseBody(std::string body) { return parseParameters(body, 0); }
 
-QueryParams parseCookie(std::string cookie) {
-  return parseParameters(cookie, 0, true);
-}
-
+QueryParams parseCookie(std::string cookie) { return parseParameters(cookie, 0, true); }

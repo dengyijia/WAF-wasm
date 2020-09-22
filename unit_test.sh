@@ -1,4 +1,5 @@
-cd ./test
+#!/bin/sh
+cd ./unit_test
 make clean
 make
 make clean
